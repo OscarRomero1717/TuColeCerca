@@ -566,7 +566,8 @@ function generatePDF(fileName) {
         'width': 170
     });
     console.log(doc);
-    demoFromHTML();
+    var opt = demoFromHTML();
+
 
 
 
@@ -626,6 +627,32 @@ function demoFromHTML() {
     pdfs.save('test.pdf');
 
 }
+
+function enviar() {
+    Email.send({
+        Host: "smtp.elasticemail.com",
+        Username: "colegiosbogota2020@gmail.com",
+        Password: "AB9CD84CF2FF50D99DDD05B8520796F0C983",
+        To: 'odromero1717@gmail.com',
+        From: "colegiosbogota2020@gmail.com",
+        Subject: "Vinajas  Chupador de Pijas",
+        Body: "Este es un  test",
+        Attachments: [{
+            name: "ColegiosBogota.pdf",
+            data: "file:///C:/Users/danie/Downloads/ColegiosBogota.pdf"
+        }]
+    }).then(
+        message => alert(message)
+    );
+
+
+}
+
+
+//file:///C:/Users/danie/Downloads/ColegiosBogota.pdf
+
+
+
 
 
 
