@@ -1,6 +1,6 @@
 var map, heatmap;
 let markers = [];
-var pdffile;
+var pdfFileBase64 = "";
 
 var divResult = "";
 
@@ -575,8 +575,8 @@ function generatePDF(fileName) {
     //var ooo = Base64.encode(opt);
 
     var opm = 'JVBERi0xLjMKMyAwIG9iago8PC9UeXBlIC9QYWdlCi9QYXJlbnQgMSAwIFIKL1Jlc291cmNlcyAyIDAgUgovTWVkaWFCb3ggWzAgMCA2MTIuMDAgNzkyLjAwXQovQ29udGVudHMgNCAwIFIKPj4KZW5kb2JqCjQgMCBvYmoKPDwvTGVuZ3RoIDk5ND4+CnN0cmVhbQowLjIwIHcKMCBHCnEKcSBCVCAwIGcgNDAuMDAgNzAwLjc1IFRkCjAgLTE4LjAwIFRkCjAuMTI5IDAuMTQ1IDAuMTYxIHJnCi9GMSAxMi4wMCBUZiAoU2VsZWN0ICJMb2dvdXQiIGJlbG93IGlmIHlvdSBhcmUgcmVhZHkgdG8gZW5kIHlvdXIgY3VycmVudCBzZXNzaW9uLikgVGoKRVQgUQpxIEJUIDAgZyA0MC4wMCA2NzEuNTAgVGQKMCAtMTMuMjAgVGQKMC4wMDAgMC40ODIgMS4wMDAgcmcKL0YyIDEyLjAwIFRmIChJTlNUIERFIEJUTyBURUMgQ09NRVJDSUFMIFBJVEFHT1JBUykgVGoKRVQgUQpxIEJUIDAgZyA0MC4wMCA2NTUuMzAgVGQKMCAtMTQuNDAgVGQKMC4xMjkgMC4xNDUgMC4xNjEgcmcKL0YxIDkuNjAgVGYgKEtSIDUgMTEgNjcpIFRqCkVUIFEKcSBCVCAwIGcgNDAuMDAgNjI4LjkwIFRkCjAgLTE0LjQwIFRkCi9GMSA5LjYwIFRmIChab25hOiBVUkJBTkEpIFRqCkVUIFEKcSBCVCAwIGcgNDAuMDAgNjAyLjUwIFRkCjAgLTE0LjQwIFRkCi9GMSA5LjYwIFRmIChKb3JuYWRhOiBDT01QTEVUQSkgVGoKRVQgUQpxIEJUIDAgZyA0MC4wMCA1NzYuMTAgVGQKMCAtMTQuNDAgVGQKL0YxIDkuNjAgVGYgKEdyYWRvczogNiw3LDgsOSwxMCwxMSkgVGoKRVQgUQpxIEJUIDAgZyA0MC4wMCA1NDkuNzAgVGQKMCAtMTQuNDAgVGQKL0YxIDkuNjAgVGYgKEVzcGVjaWFsaWRhZDogQ09NRVJDSUFMLEFDQUTJTUlDQSkgVGoKRVQgUQpxIEJUIDAgZyA0MC4wMCA1MjMuMzAgVGQKMCAtMTQuNDAgVGQKL0YxIDkuNjAgVGYgKE1vZGVsb3MgRWR1Y2F0aXZvczogRURVQ0FDSdNOIFRSQURJQ0lPTkFMKSBUagpFVCBRCnEgQlQgMCBnIDQwLjAwIDUwOC45MCBUZAowIC0xNC40MCBUZAowLjAwMCAwLjQ4MiAxLjAwMCByZwovRjEgOS42MCBUZiAoTWFwYSkgVGoKRVQgUQpxIEJUIDAgZyA0MC4wMCA0ODUuNTAgVGQKMCAtMTQuNDAgVGQKMC41MjUgMC41NTcgMC41ODggcmcKL0YxIDkuNjAgVGYgKFVsdGltYSBhY3R1YWxpemFjafNuIGhhY2UgOCBtZXNlcykgVGoKRVQgUQpRCmVuZHN0cmVhbQplbmRvYmoKMSAwIG9iago8PC9UeXBlIC9QYWdlcwovS2lkcyBbMyAwIFIgXQovQ291bnQgMQo+PgplbmRvYmoKNSAwIG9iago8PC9CYXNlRm9udC9IZWx2ZXRpY2EvVHlwZS9Gb250Ci9FbmNvZGluZy9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUvVHlwZTE+PgplbmRvYmoKNiAwIG9iago8PC9CYXNlRm9udC9IZWx2ZXRpY2EtQm9sZC9UeXBlL0ZvbnQKL0VuY29kaW5nL1dpbkFuc2lFbmNvZGluZwovU3VidHlwZS9UeXBlMT4+CmVuZG9iago3IDAgb2JqCjw8L0Jhc2VGb250L0hlbHZldGljYS1PYmxpcXVlL1R5cGUvRm9udAovRW5jb2RpbmcvV2luQW5zaUVuY29kaW5nCi9TdWJ0eXBlL1R5cGUxPj4KZW5kb2JqCjggMCBvYmoKPDwvQmFzZUZvbnQvSGVsdmV0aWNhLUJvbGRPYmxpcXVlL1R5cGUvRm9udAovRW5jb2RpbmcvV2luQW5zaUVuY29kaW5nCi9TdWJ0eXBlL1R5cGUxPj4KZW5kb2JqCjkgMCBvYmoKPDwvQmFzZUZvbnQvQ291cmllci9UeXBlL0ZvbnQKL0VuY29kaW5nL1dpbkFuc2lFbmNvZGluZwovU3VidHlwZS9UeXBlMT4+CmVuZG9iagoxMCAwIG9iago8PC9CYXNlRm9udC9Db3VyaWVyLUJvbGQvVHlwZS9Gb250Ci9FbmNvZGluZy9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUvVHlwZTE+PgplbmRvYmoKMTEgMCBvYmoKPDwvQmFzZUZvbnQvQ291cmllci1PYmxpcXVlL1R5cGUvRm9udAovRW5jb2RpbmcvV2luQW5zaUVuY29kaW5nCi9TdWJ0eXBlL1R5cGUxPj4KZW5kb2JqCjEyIDAgb2JqCjw8L0Jhc2VGb250L0NvdXJpZXItQm9sZE9ibGlxdWUvVHlwZS9Gb250Ci9FbmNvZGluZy9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUvVHlwZTE+PgplbmRvYmoKMTMgMCBvYmoKPDwvQmFzZUZvbnQvVGltZXMtUm9tYW4vVHlwZS9Gb250Ci9FbmNvZGluZy9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUvVHlwZTE+PgplbmRvYmoKMTQgMCBvYmoKPDwvQmFzZUZvbnQvVGltZXMtQm9sZC9UeXBlL0ZvbnQKL0VuY29kaW5nL1dpbkFuc2lFbmNvZGluZwovU3VidHlwZS9UeXBlMT4+CmVuZG9iagoxNSAwIG9iago8PC9CYXNlRm9udC9UaW1lcy1JdGFsaWMvVHlwZS9Gb250Ci9FbmNvZGluZy9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUvVHlwZTE+PgplbmRvYmoKMTYgMCBvYmoKPDwvQmFzZUZvbnQvVGltZXMtQm9sZEl0YWxpYy9UeXBlL0ZvbnQKL0VuY29kaW5nL1dpbkFuc2lFbmNvZGluZwovU3VidHlwZS9UeXBlMT4+CmVuZG9iagoxNyAwIG9iago8PC9CYXNlRm9udC9aYXBmRGluZ2JhdHMvVHlwZS9Gb250Ci9FbmNvZGluZy9TdGFuZGFyZEVuY29kaW5nCi9TdWJ0eXBlL1R5cGUxPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1Byb2NTZXQgWy9QREYgL1RleHQgL0ltYWdlQiAvSW1hZ2VDIC9JbWFnZUldCi9Gb250IDw8Ci9GMSA1IDAgUgovRjIgNiAwIFIKL0YzIDcgMCBSCi9GNCA4IDAgUgovRjUgOSAwIFIKL0Y2IDEwIDAgUgovRjcgMTEgMCBSCi9GOCAxMiAwIFIKL0Y5IDEzIDAgUgovRjEwIDE0IDAgUgovRjExIDE1IDAgUgovRjEyIDE2IDAgUgovRjEzIDE3IDAgUgo+PgovWE9iamVjdCA8PAo+Pgo+PgplbmRvYmoKMTggMCBvYmoKPDwKL1Byb2R1Y2VyIChqc1BERiAxLjMuMiAyMDE2LTA5LTMwVDIwOjMzOjE4Ljg2N1o6amFtZXNoYWxsKQovQ3JlYXRpb25EYXRlIChEOjIwMjAwOTIyMjEyMDQ1LTA1JzAwJykKPj4KZW5kb2JqCjE5IDAgb2JqCjw8Ci9UeXBlIC9DYXRhbG9nCi9QYWdlcyAxIDAgUgovT3BlbkFjdGlvbiBbMyAwIFIgL0ZpdEggbnVsbF0KL1BhZ2VMYXlvdXQgL09uZUNvbHVtbgo+PgplbmRvYmoKeHJlZgowIDIwCjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMTE2MSAwMDAwMCBuIAowMDAwMDAyNDU1IDAwMDAwIG4gCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDExOCAwMDAwMCBuIAowMDAwMDAxMjE4IDAwMDAwIG4gCjAwMDAwMDEzMDggMDAwMDAgbiAKMDAwMDAwMTQwMyAwMDAwMCBuIAowMDAwMDAxNTAxIDAwMDAwIG4gCjAwMDAwMDE2MDMgMDAwMDAgbiAKMDAwMDAwMTY5MSAwMDAwMCBuIAowMDAwMDAxNzg1IDAwMDAwIG4gCjAwMDAwMDE4ODIgMDAwMDAgbiAKMDAwMDAwMTk4MyAwMDAwMCBuIAowMDAwMDAyMDc2IDAwMDAwIG4gCjAwMDAwMDIxNjggMDAwMDAgbiAKMDAwMDAwMjI2MiAwMDAwMCBuIAowMDAwMDAyMzYwIDAwMDAwIG4gCjAwMDAwMDI2OTEgMDAwMDAgbiAKMDAwMDAwMjgxMiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDIwCi9Sb290IDE5IDAgUgovSW5mbyAxOCAwIFIKPj4Kc3RhcnR4cmVmCjI5MTYKJSVFT0Y=';
-
-    enviar(opm);
+    var rril0 = pdfFileBase64;
+    enviar(rril0, 'ColegiosBogota1.pdf');
 
 
 
@@ -588,9 +588,16 @@ function generatePDF(fileName) {
 
 
 
+
+
+
+
+
 function convertToBase64() {
     //Read File
     var selectedFile = document.getElementById("inputFile").files;
+    namePdf = selectedFile[0];
+    //getBase64(selectedFile[0]);
     //Check File is not Empty
     if (selectedFile.length > 0) {
         // Select the very first file from list
@@ -602,13 +609,19 @@ function convertToBase64() {
         fileReader.onload = function(fileLoadedEvent) {
             base64 = fileLoadedEvent.target.result;
             // Print data in console
-            var pdffile = base64;
-            console.log(base64);
+            alert('oscar' + base64);
+            pdfFileBase64 = base64;
         };
         // Convert data to base64
         fileReader.readAsDataURL(fileToLoad);
+
+
     }
 }
+
+
+
+
 
 
 function demoFromHTML() {
@@ -667,7 +680,12 @@ function demoFromHTML() {
 
 
 
-function enviar(pdf) {
+function enviar(pdf, nombre) {
+
+
+
+
+
     Email.send({
         Host: "smtp.elasticemail.com",
         Username: "colegiosbogota2020@gmail.com",
@@ -677,7 +695,7 @@ function enviar(pdf) {
         Subject: "Vinajas  Chupador de Pijas",
         Body: "Este es un  test",
         Attachments: [{
-            name: "ColegiosBogota1.pdf",
+            name: nombre,
             data: pdf,
         }]
     }).then(
