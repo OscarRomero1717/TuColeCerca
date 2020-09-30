@@ -162,8 +162,8 @@ function PrintInfo(data) {
   if (data[0].estrato_socio_economico === undefined) {
     data.estrato_socio_economico = "No aplica";
   }
-  if (data[0].especialidad_para_la_media === undefined) {
-    data.especialidad_para_la_media = "No aplica";
+  if (data[0].enfasis_para_el_caracter_academico_de_la_media === undefined) {
+    data.enfasis_para_el_caracter_academico_de_la_media = "No aplica";
   }
   if (data[0].modelos_educativos === undefined) {
     data.modelos_educativos = "No aplica";
@@ -178,84 +178,7 @@ function PrintInfo(data) {
     data.talentos_o_capacidades_excepcionales = "No aplica";
   }
 
-  cardsinfo =
-    cardsinfo +
-    `<div class="col-6"> 
-            <div class="card mb-3" id="InfoAllOnlyu" >
-                                    
-                    <div class="card-body">                               
-                        <h6 class="card-title mb-1">
-                            <a href="#">${data[0].nombre_establecimiento_educativo}</a>
-                        </h6>
-                        <p class="card-text small">${data[0].direccion1_georeferenciacion}                                
-                        </p>
-
-                        <p class="card-text small">
-                            Localidad: 
-                            ${data[0].nombre_localidad}                                
-                        </p>
-
-                        <p class="card-text small">
-                            Barrio: 
-                            ${data[0].barrio1_geo}                                
-                        </p>
-
-                        <p class="card-text small">
-                          Discapacidades: 
-                            ${data[0].discapacidad_por_categoria}                                
-                        </p>
-
-                        <p class="card-text small">
-                            Talento excepcionales: 
-                            ${data[0].talentos_o_capacidades_excepcionales}                                
-                        </p>
-                        <p class="card-text small">
-                            Clase: 
-                            ${data[0].clase}                                
-                        </p>
-
-                        
-                        
-                        <p class="card-text small">
-                            Grados: 
-                            ${data[0].grados}                                
-                        </p>
-                        <p class="card-text small">
-                            Especialidad: 
-                            ${data[0].especialidad_para_la_media}                                
-                        </p>
-                        
-                        <p class="card-text small">
-                            Modelos Educativos: 
-                            ${data[0].modelos_educativos}                                
-                        </p>
-                        <p class="card-text small">
-                            Idiomas: 
-                            ${data[0].idiomas}                                
-                        </p>
-                        <p class="card-text small">
-                            Modelos Estrato socioeconómico : 
-                            ${data[0].estrato_socio_economico}                                
-                        </p>
-
-
-                    </div>
-                    <hr class="my-0">
-                    <div class="card-body py-2 small">
-                        
-                        
-                        <a class="mr-3 d-inline-block" href="javascript:void(0)" onclick="ChangeTabCompartationMAP('${data[0].direccion1_georeferenciacion}', '${data[0].nombre_establecimiento_educativo}')">
-                            <i class="fa fa-fw fa-map"></i>
-                            Mapa
-                        </a>                       
-
-                        
-                    </div>
-                    <div class="card-footer small text-muted">
-                        Ultima actualización hace 8 meses
-                    </div>
-            </div>
-        </div>`;
+  cardsinfo = cardsinfo + createCards(false, data[0]);
 
   $("#ComparerDiv").append(cardsinfo);
   divResult = divResult + cardsinfo;
@@ -264,8 +187,8 @@ function PrintInfo(data) {
 function CheckFunction() {
   var index = 0;
   $("input[type=checkbox]:checked").each(function () {
-    if ($("input[type=checkbox]:checked").length >= 3) {    
-    showComparations()
+    if ($("input[type=checkbox]:checked").length >= 3) {
+      showComparations();
       clearMarkers();
       var idColegio = $("input[type=checkbox]:checked")[index].id;
       var url = createInfoCompare(idColegio);
@@ -277,7 +200,6 @@ function CheckFunction() {
     // sendMail();
   });
 }
-
 
 function createAPIUrl(idColegio) {
   var query = "nombreestablecimiento=" + idColegio;
@@ -312,11 +234,12 @@ function ChangeTabCompartationMAP(address, schoolName) {
 
 function showFilter() {
   $("#Filters").show();
-  
+
   $("#Results").hide();
   $("#RootComparerDiv").hide();
+  $("#ComparerDiv").hide();
+
   $("#MapContent").hide();
-  
 
   $("#FilterMenu").addClass("active");
   $("#ResultMenu").removeClass("active");
@@ -329,26 +252,25 @@ function showResults() {
   $("#Filters").hide();
   $("#MapContent").hide();
   $("#RootComparerDiv").hide();
-
+  $("#ComparerDiv").hide();
 
   $("#ResultMenu").addClass("active");
   $("#FilterMenu").removeClass("active");
   $("#MapMenu").removeClass("active");
   $("#CompareMenu").removeClass("active");
-
 }
 
-function showComparations(){
-    $("#RootComparerDiv").show();
-    $("#Results").hide();
-    $("#Filters").hide();
-    $("#MapContent").hide();
-  
-  
-    $("#CompareMenu").addClass("active");
-    $("#ResultMenu").removeClass("active");
-    $("#FilterMenu").removeClass("active");
-    $("#MapMenu").removeClass("active");
+function showComparations() {
+  $("#RootComparerDiv").show();
+  $("#ComparerDiv").show();
+  $("#Results").hide();
+  $("#Filters").hide();
+  $("#MapContent").hide();
+
+  $("#CompareMenu").addClass("active");
+  $("#ResultMenu").removeClass("active");
+  $("#FilterMenu").removeClass("active");
+  $("#MapMenu").removeClass("active");
 }
 
 function SetDireccion(address, schoolName) {
@@ -588,7 +510,7 @@ function ApplyFilter(datos) {
 
   var isFalseTalentos = talentos == "false";
 
-  var prefilter = datos;  
+  var prefilter = datos;
   var queryToSearch = "";
   var propertiesToSearch = "";
 
@@ -605,18 +527,18 @@ function ApplyFilter(datos) {
     queryToSearch = addAmpersand(queryToSearch) + clase;
     propertiesToSearch = addAmpersand(propertiesToSearch) + "clase";
   }
-  if (!isFalseEspecialidad) {    
+  if (!isFalseEspecialidad) {
     queryToSearch = addAmpersand(queryToSearch) + especialidad;
     propertiesToSearch =
       addAmpersand(propertiesToSearch) +
-      "especialidad_para_la_media";
+      "enfasis_para_el_caracter_academico_de_la_media";
   }
   if (!isFalseEnfasis) {
     queryToSearch = addAmpersand(queryToSearch) + enfasis;
     propertiesToSearch =
       addAmpersand(propertiesToSearch) + "caracter_para_la_media";
   }
-  if (!isFalseTalentos) {    
+  if (!isFalseTalentos) {
     queryToSearch = addAmpersand(queryToSearch) + talentos;
     propertiesToSearch =
       addAmpersand(propertiesToSearch) + "talentos_o_capacidades_excepcionales";
@@ -679,8 +601,10 @@ function cardResult(data) {
       if (data[i].estrato_socio_economico === undefined) {
         data[i].estrato_socio_economico = "No aplica";
       }
-      if (data[i].especialidad_para_la_media === undefined) {
-        data[i].especialidad_para_la_media = "No aplica";
+      if (
+        data[i].enfasis_para_el_caracter_academico_de_la_media === undefined
+      ) {
+        data[i].enfasis_para_el_caracter_academico_de_la_media = "No aplica";
       }
       if (data[i].modelos_educativos === undefined) {
         data[i].modelos_educativos = "No aplica";
@@ -698,70 +622,7 @@ function cardResult(data) {
         data[i].talentos_o_capacidades_excepcionales = "No aplica";
       }
 
-      cards =
-        cards +
-        `<div class="card mb-3" id="InfoAll">
-                            
-                            <div class="card-body">
-                              
-                                <h6 class="" >
-                                   
-                                    <input type="checkbox" onclick="CheckFunction()" class="form-check-input" id="${data[i].nombre_establecimiento_educativo}">
-                                    <label class="custom-control-label" for="defaultUnchecked"> Elegir este colegio para comparar</label>
-                               </h6>
-
-                                <h6 class="card-title mb-1">
-                                    <a href="#">${data[i].nombre_establecimiento_educativo}</a>
-                                </h6>
-                                <p class="card-text small">${data[i].direccion1_georeferenciacion}                                
-                                </p>
-                                <p class="card-text small">
-                                Localidad : 
-                                ${data[i].nombre_localidad}, barrio  ${data[i].barrio1_geo}                                  
-                               </p>
-
-                               <p class="card-text small">
-                                    Clase: 
-                                    ${data[i].clase}                                
-                                </p>
-                               
-
-                                <p class="card-text small">
-                                    Discapacidades: 
-                                    ${data[i].discapacidad_por_categoria}                                
-                                </p>
-
-                                <p class="card-text small">
-                                    Talentos excepcionales: 
-                                    ${data[i].talentos_o_capacidades_excepcionales}                                
-                                </p>
-                                
-                              
-                                
-                                <p class="card-text small">
-                                    Especialidad: 
-                                    ${data[i].especialidad_para_la_media}                                
-                                </p>
-                                <p class="card-text small">
-                                    Modelos Educativos: 
-                                    ${data[i].modelos_educativos}                                
-                                </p>
-
-
-                            </div>
-                            <hr class="my-0">
-                            <div class="card-body py-2 small">
-                                
-                                <a class="mr-3 d-inline-block" href="javascript:void(0)" onclick="ChangeTab('${data[i].direccion1_georeferenciacion}', '${data[i].nombre_establecimiento_educativo}')">
-                                    <i class="fa fa-fw fa-map"></i>
-                                    Mapa
-                                </a>
-                               
-                            </div>
-                            <div class="card-footer small text-muted">
-                                Ultima actualización hace 2 meses
-                            </div>
-                        </div>`;
+      cards = cards + createCards(true, data[i]);
     }
 
     $("#ResultSearch").html(cards);
@@ -778,4 +639,93 @@ function createInfoCompare(id) {
   return $(allInfo).filter(function (i, n) {
     return n.nombre_establecimiento_educativo === id;
   });
+}
+
+function createCards(withChecks, data) {
+  return `${
+    withChecks
+      ? `<div class="card mb-3" id="InfoAll">`
+      : `<div class="col-6"> <div class="card mb-3" id="InfoAllOnlyu">`
+  }   
+  
+  
+          <div class="card-body">   
+            ${
+              withChecks
+                ? `<h6 class="" >                
+                      <input type="checkbox" onclick="CheckFunction()" class="form-check-input" id="${data.nombre_establecimiento_educativo}">
+                      <label class="custom-control-label" for="defaultUnchecked"> Elegir este colegio para comparar</label>
+                </h6>`
+                : ``
+            }     
+            
+           
+
+              <h6 class="card-title mb-1">
+                  <a href="#">${data.nombre_establecimiento_educativo}</a>
+              </h6>
+              <p class="card-text small">${
+                data.direccion1_georeferenciacion
+              }                                
+              </p>
+              <p class="card-text small">
+              Localidad : 
+              ${data.nombre_localidad}, barrio  ${
+    data.barrio1_geo
+  }                                  
+            </p>
+
+            <p class="card-text small">
+                  Clase: 
+                  ${data.clase}                                
+              </p>
+            
+
+              <p class="card-text small">
+                  Discapacidades: 
+                  ${
+                    data.discapacidad_por_categoria
+                  }                                
+              </p>
+
+              <p class="card-text small">
+                  Talentos excepcionales: 
+                  ${
+                    data.talentos_o_capacidades_excepcionales
+                  }                                
+              </p>
+              
+            
+              
+              <p class="card-text small">
+                  Especialidad: 
+                  ${
+                    data.enfasis_para_el_caracter_academico_de_la_media
+                  }                                
+              </p>
+              <p class="card-text small">
+                  Modelos Educativos: 
+                  ${data.modelos_educativos}                                
+              </p>
+
+
+          </div>
+          <hr class="my-0">
+          <div class="card-body py-2 small">
+              
+              <a class="mr-3 d-inline-block" href="javascript:void(0)" onclick="ChangeTab('${
+                data.direccion1_georeferenciacion
+              }', '${data.nombre_establecimiento_educativo}')">
+                  <i class="fa fa-fw fa-map"></i>
+                  Mapa
+              </a>
+            
+          </div>
+          <div class="card-footer small text-muted">
+              Ultima actualización hace 2 meses
+          </div>
+        </div>
+        ${withChecks ? `</div>` : ``}   
+        
+        `;
 }
