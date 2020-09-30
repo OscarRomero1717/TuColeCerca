@@ -264,8 +264,7 @@ function PrintInfo(data) {
 function CheckFunction() {
   var index = 0;
   $("input[type=checkbox]:checked").each(function () {
-    if ($("input[type=checkbox]:checked").length >= 3) {
-    //   focusResultMenu();
+    if ($("input[type=checkbox]:checked").length >= 3) {    
     showComparations()
       clearMarkers();
       var idColegio = $("input[type=checkbox]:checked")[index].id;
@@ -279,18 +278,6 @@ function CheckFunction() {
   });
 }
 
-// function focusResultMenu() {
-//   $("#ResultMenu").removeClass("active");
-//   $("#FilterMenu").removeClass("active");
-//   $("#MapMenu").removeClass("active");
-//   $("#CompareMenu").addClass("active");
-
-//   $("#MapContent").hide();
-//   $("#Results").hide();
-//   $("#Filters").hide();
-
-//   $("#ComparerDiv").show();
-// }
 
 function createAPIUrl(idColegio) {
   var query = "nombreestablecimiento=" + idColegio;
@@ -618,11 +605,11 @@ function ApplyFilter(datos) {
     queryToSearch = addAmpersand(queryToSearch) + clase;
     propertiesToSearch = addAmpersand(propertiesToSearch) + "clase";
   }
-  if (!isFalseEspecialidad) {
+  if (!isFalseEspecialidad) {    
     queryToSearch = addAmpersand(queryToSearch) + especialidad;
     propertiesToSearch =
       addAmpersand(propertiesToSearch) +
-      "enfasis_para_el_caracter_academico_de_la_media";
+      "especialidad_para_la_media";
   }
   if (!isFalseEnfasis) {
     queryToSearch = addAmpersand(queryToSearch) + enfasis;
