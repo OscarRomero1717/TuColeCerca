@@ -180,7 +180,8 @@ function PrintInfo(data) {
 
   cardsinfo =
     cardsinfo +
-    `<div class="card mb-3" id="InfoAllOnlyu" >
+    `<div class="col-6"> 
+            <div class="card mb-3" id="InfoAllOnlyu" >
                                     
                     <div class="card-body">                               
                         <h6 class="card-title mb-1">
@@ -253,7 +254,8 @@ function PrintInfo(data) {
                     <div class="card-footer small text-muted">
                         Ultima actualización hace 8 meses
                     </div>
-                </div>`;
+            </div>
+        </div>`;
 
   $("#ComparerDiv").append(cardsinfo);
   divResult = divResult + cardsinfo;
@@ -263,7 +265,8 @@ function CheckFunction() {
   var index = 0;
   $("input[type=checkbox]:checked").each(function () {
     if ($("input[type=checkbox]:checked").length >= 3) {
-      focusResultMenu();
+    //   focusResultMenu();
+    showComparations()
       clearMarkers();
       var idColegio = $("input[type=checkbox]:checked")[index].id;
       var url = createInfoCompare(idColegio);
@@ -276,18 +279,18 @@ function CheckFunction() {
   });
 }
 
-function focusResultMenu() {
-  $("#ResultMenu").removeClass("active");
-  $("#FilterMenu").removeClass("active");
-  $("#MapMenu").removeClass("active");
-  $("#CompareMenu").addClass("active");
+// function focusResultMenu() {
+//   $("#ResultMenu").removeClass("active");
+//   $("#FilterMenu").removeClass("active");
+//   $("#MapMenu").removeClass("active");
+//   $("#CompareMenu").addClass("active");
 
-  $("#MapContent").hide();
-  $("#Results").hide();
-  $("#Filters").hide();
+//   $("#MapContent").hide();
+//   $("#Results").hide();
+//   $("#Filters").hide();
 
-  $("#ComparerDiv").show();
-}
+//   $("#ComparerDiv").show();
+// }
 
 function createAPIUrl(idColegio) {
   var query = "nombreestablecimiento=" + idColegio;
@@ -322,22 +325,43 @@ function ChangeTabCompartationMAP(address, schoolName) {
 
 function showFilter() {
   $("#Filters").show();
+  
   $("#Results").hide();
+  $("#RootComparerDiv").hide();
   $("#MapContent").hide();
+  
 
   $("#FilterMenu").addClass("active");
   $("#ResultMenu").removeClass("active");
   $("#MapMenu").removeClass("active");
+  $("#CompareMenu").removeClass("active");
 }
 
 function showResults() {
   $("#Results").show();
   $("#Filters").hide();
   $("#MapContent").hide();
+  $("#RootComparerDiv").hide();
+
 
   $("#ResultMenu").addClass("active");
   $("#FilterMenu").removeClass("active");
   $("#MapMenu").removeClass("active");
+  $("#CompareMenu").removeClass("active");
+
+}
+
+function showComparations(){
+    $("#RootComparerDiv").show();
+    $("#Results").hide();
+    $("#Filters").hide();
+    $("#MapContent").hide();
+  
+  
+    $("#CompareMenu").addClass("active");
+    $("#ResultMenu").removeClass("active");
+    $("#FilterMenu").removeClass("active");
+    $("#MapMenu").removeClass("active");
 }
 
 function SetDireccion(address, schoolName) {
