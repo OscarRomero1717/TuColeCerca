@@ -577,69 +577,54 @@ function ApplyFilter(datos) {
 
   var isFalseTalentos = talentos == "false";
 
-  var prefilter = datos;
+  var prefilter = datos;  
   var queryToSearch = "";
   var propertiesToSearch = "";
 
   if (!isFalseDiscapacity) {
-    // prefilter = filterItems(
-    //   discapacidades,
-    //   datos,
-    //   "discapacidad_por_categoria"
-    // );
-    queryToSearch =
-      queryToSearch + (queryToSearch == "" ? "" : "&") + discapacidades;
+    queryToSearch = addAmpersand(queryToSearch) + discapacidades;
     propertiesToSearch =
-      propertiesToSearch +
-      (propertiesToSearch == "" ? "" : "&") +
-      "discapacidad_por_categoria";
+      addAmpersand(propertiesToSearch) + "discapacidad_por_categoria";
   }
   if (!isFalseZona) {
-    // prefilter = filterItems(zona, datos, "nombre_localidad");
-    queryToSearch = queryToSearch + (queryToSearch == "" ? "" : "&") + zona;
-    propertiesToSearch =
-      propertiesToSearch +
-      (propertiesToSearch == "" ? "" : "&") +
-      "nombre_localidad";
+    queryToSearch = addAmpersand(queryToSearch) + zona;
+    propertiesToSearch = addAmpersand(propertiesToSearch) + "nombre_localidad";
   }
   if (!isFalseclase) {
-    // prefilter = filterItems(clase, datos, "clase");
-    queryToSearch = queryToSearch + (queryToSearch == "" ? "" : "&") + clase;
-    propertiesToSearch =
-      propertiesToSearch + (propertiesToSearch == "" ? "" : "&") + "clase";
+    queryToSearch = addAmpersand(queryToSearch) + clase;
+    propertiesToSearch = addAmpersand(propertiesToSearch) + "clase";
   }
   if (!isFalseEspecialidad) {
-    // prefilter = filterItems(
-    //   especialidad,
-    //   datos,
-    //   "enfasis_para_el_caracter_academico_de_la_media"
-    // );
-    queryToSearch =
-      queryToSearch + (queryToSearch == "" ? "" : "&") + especialidad;
-    propertiesToSearch +
-      (propertiesToSearch == "" ? "" : "&") +
+    queryToSearch = addAmpersand(queryToSearch) + especialidad;
+    propertiesToSearch =
+      addAmpersand(propertiesToSearch) +
       "enfasis_para_el_caracter_academico_de_la_media";
   }
   if (!isFalseEnfasis) {
-    // prefilter = filterItems(enfasis, datos, "caracter_para_la_media");
-    queryToSearch = queryToSearch + (queryToSearch == "" ? "" : "&") + enfasis;
-    propertiesToSearch +
-      (propertiesToSearch == "" ? "" : "&") +
-      "caracter_para_la_media";
+    queryToSearch = addAmpersand(queryToSearch) + enfasis;
+    propertiesToSearch =
+      addAmpersand(propertiesToSearch) + "caracter_para_la_media";
+  }
+  if (!isFalseTalentos) {    
+    queryToSearch = addAmpersand(queryToSearch) + talentos;
+    propertiesToSearch =
+      addAmpersand(propertiesToSearch) + "talentos_o_capacidades_excepcionales";
   }
 
-  prefilter = filterItems(queryToSearch, datos, propertiesToSearch);
+  if (queryToSearch != "" && propertiesToSearch != "") {
+    prefilter = filterItems(queryToSearch, datos, propertiesToSearch);
+  }
 
   return prefilter;
 }
 
+function addAmpersand(wordToConvert) {
+  return wordToConvert == "" ? wordToConvert : wordToConvert + "&";
+}
+
 function filterItems(needle, heystack, property) {
-  console.log(needle);
-  console.log(property);
   var splitFilter = needle.split("&");
   var splitproperties = property.split("&");
-  console.log(splitFilter);
-  console.log(splitproperties);
   for (let index = 0; index < splitFilter.length; index++) {
     var query = splitFilter[index].toLowerCase();
     heystack = heystack.filter(function (item) {
@@ -649,13 +634,6 @@ function filterItems(needle, heystack, property) {
     });
   }
   return heystack;
-
-  //   var query = needle.toLowerCase();
-  //   return heystack.filter(function (item) {
-  //     if (typeof item[property] != "undefined") {
-  //       return item[property].toLowerCase().indexOf(query) >= 0;
-  //     }
-  //   });
 }
 
 function cardResult(data) {
