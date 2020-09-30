@@ -4,6 +4,8 @@ var pdfFileBase64 = "";
 
 var divResult = "";
 
+var allInfo;
+
 function initMap() {
     var heatMapData = [
         { location: new google.maps.LatLng(4.719109, -74.031375), weight: 1 },
@@ -153,59 +155,78 @@ function ToggleFilters() {
 
 
 
-function PrintInfo(url) {
-    $.getJSON(url, function(data, textstatus) {
-        var cards = '';
+function PrintInfo(data) {
 
-        $.each(data, function(i, entry) {
+    var cardsinfo = '';
 
-            if (entry.idiomas === undefined) { entry.idiomas = 'No aplica' }
-            if (entry.estrato_socio_economico === undefined) { entry.estrato_socio_economico = 'No aplica' }
-            if (entry.especialidad === undefined) { entry.especialidad = 'No aplica' }
-            if (entry.modelos_educativos === undefined) { entry.modelos_educativos = 'No aplica' }
-            if (entry.discapacidades === undefined) { entry.discapacidades = 'No aplica' }
-            if (entry.modelos_educativos === undefined) { entry.modelos_educativos = 'No aplica' }
-            cards =
-                cards +
-                `<div class="card mb-3" id="InfoAllOnlyu" >
+
+
+    if (data[0].idiomas === undefined) { data.idiomas = 'No aplica' }
+    if (data[0].estrato_socio_economico === undefined) { data.estrato_socio_economico = 'No aplica' }
+    if (data[0].especialidad_para_la_media === undefined) { data.especialidad_para_la_media = 'No aplica' }
+    if (data[0].modelos_educativos === undefined) { data.modelos_educativos = 'No aplica' }
+    if (data[0].discapacidades === undefined) { data.discapacidad_por_categoria = 'No aplica' }
+    if (data[0].modelos_educativos === undefined) { data.modelos_educativos = 'No aplica' }
+    if (data[0].talentos_o_capacidades_excepcionales === undefined) { data.talentos_o_capacidades_excepcionales = 'No aplica' }
+
+
+    cardsinfo =
+        cardsinfo +
+        `<div class="card mb-3" id="InfoAllOnlyu" >
                                     
                     <div class="card-body">                               
                         <h6 class="card-title mb-1">
-                            <a href="#">${entry.nombreestablecimiento}</a>
+                            <a href="#">${data[0].nombre_establecimiento_educativo}</a>
                         </h6>
-                        <p class="card-text small">${entry.direccion}                                
+                        <p class="card-text small">${data[0].direccion1_georeferenciacion}                                
+                        </p>
+
+                        <p class="card-text small">
+                            Localidad: 
+                            ${data[0].nombre_localidad}                                
+                        </p>
+
+                        <p class="card-text small">
+                            Barrio: 
+                            ${data[0].barrio1_geo}                                
+                        </p>
+
+                        <p class="card-text small">
+                          Discapacidades: 
+                            ${data[0].discapacidad_por_categoria}                                
+                        </p>
+
+                        <p class="card-text small">
+                            Talento excepcionales: 
+                            ${data[0].talentos_o_capacidades_excepcionales}                                
                         </p>
                         <p class="card-text small">
-                            Zona: 
-                            ${entry.zona}                                
+                            Clase: 
+                            ${data[0].clase}                                
                         </p>
-                        <p class="card-text small">
-                            Jornada: 
-                            ${entry.jornada}                                
-                        </p>
+
+                        
+                        
                         <p class="card-text small">
                             Grados: 
-                            ${entry.grados}                                
+                            ${data[0].grados}                                
                         </p>
                         <p class="card-text small">
                             Especialidad: 
-                            ${entry.especialidad}                                
+                            ${data[0].especialidad_para_la_media}                                
                         </p>
-                        <p class="card-text small">
-                          Discapacidades: 
-                            ${entry.discapacidades}                                
-                        </p>
+                        
                         <p class="card-text small">
                             Modelos Educativos: 
-                            ${entry.modelos_educativos}                                
+                            ${data[0].modelos_educativos}                                
                         </p>
                         <p class="card-text small">
                             Idiomas: 
-                            ${entry.idiomas}                                
+                            ${data[0].idiomas}                                
                         </p>
                         <p class="card-text small">
                             Modelos Estrato socioeconómico : 
-                            ${entry.estrato_socio_economico}                                
+                            ${data[0].estrato_socio_economico}                                
                         </p>
 
 
@@ -214,7 +235,7 @@ function PrintInfo(url) {
                     <div class="card-body py-2 small">
                         
                         
-                        <a class="mr-3 d-inline-block" href="javascript:void(0)" onclick="ChangeTabCompartationMAP('${entry.direccion}', '${entry.nombreestablecimiento}')">
+                        <a class="mr-3 d-inline-block" href="javascript:void(0)" onclick="ChangeTabCompartationMAP('${data[0].direccion1_georeferenciacion}', '${data[0].nombre_establecimiento_educativo}')">
                             <i class="fa fa-fw fa-map"></i>
                             Mapa
                         </a>                       
@@ -225,13 +246,13 @@ function PrintInfo(url) {
                         Ultima actualización hace 8 meses
                     </div>
                 </div>`;
-        });
-
-        $('#ComparerDiv').append(cards);
-        divResult = divResult + cards;
 
 
-    });
+    $('#ComparerDiv').append(cardsinfo);
+    divResult = divResult + cardsinfo;
+
+
+
 }
 
 function CheckFunction() {
@@ -241,7 +262,7 @@ function CheckFunction() {
             focusResultMenu();
             clearMarkers();
             var idColegio = $('input[type=checkbox]:checked')[index].id;
-            var url = createAPIUrl(idColegio);
+            var url = createInfoCompare(idColegio);
             PrintInfo(url);
             index++;
             // generatePDF('barco');
@@ -275,207 +296,16 @@ function createAPIUrl(idColegio) {
     return url;
 }
 
-function sendMail() {
-    $.ajax({
-        type: 'POST',
-        url: 'https://mandrillapp.com/api/1.0/messages/send.json',
-        data: {
-            key: 'YOUR API KEY HERE',
-            message: {
-                from_email: 'YOUR@EMAIL.HERE',
-                to: [{
-                    email: 'almenfis_1717@EMAIL.HERE',
-                    name: 'RECIPIENT NAME (OPTIONAL)',
-                    type: 'to',
-                }, ],
-                autotext: 'true',
-                subject: 'YOUR SUBJECT HERE!',
-                html: 'YOUR EMAIL CONTENT HERE! YOU CAN USE HTML!',
-            },
-        },
-    }).done(function(response) {
-        console.log(response); // if you're into that sorta thing
-    });
-}
+
 
 function Search() {
     clearMarkers()
     $('#Filters').hide();
     document.getElementById('loader').style.display = 'block';
-
-    zona = document.getElementById('Zone').value;
-    nivel = document.getElementById('Level').value;
-    jornada = document.getElementById('StudyDay').value;
-    grado = document.getElementById('grade').value;
-    especialidad = document.getElementById('Specialties').value;
-    modelos_educativos = document.getElementById('EducationalModel').value;
-    discapacidades = document.getElementById('discapacity').value;
-
-    var isFalseZona = zona == 'false';
-    var isFalseNivel = nivel == 'false';
-    var isFalseJornada = jornada == 'false';
-    var isFalseGrado = grado == 'false';
-    var isFalseEspecialidad = especialidad == 'false';
-    var isFalseModelos_educativos = modelos_educativos == 'false';
-    var isFalseDiscapacity = discapacidades == 'false';
-
-    query = "$query=select * where codigodepartamento = '11' ";
-    if (!isFalseZona) {
-        zona = " and zona='" + zona + "'";
-    } else {
-        zona = '';
-    }
-
-    if (!isFalseDiscapacity) {
-        discapacidades = " and discapacidades like '%25" + discapacidades + "%25'";
-    } else {
-        discapacidades = '';
-    }
-
-    if (!isFalseNivel) {
-        nivel = " and niveles like '%25" + nivel + "%25'";
-    } else {
-        nivel = '';
-    }
-
-    if (!isFalseJornada) {
-        jornada = " and jornada like '%25" + jornada + "%25'";
-    } else {
-        jornada = '';
-    }
-
-    if (!isFalseGrado) {
-        grado = " and grados  like '%25" + grado + "%25'";
-    } else {
-        grado = '';
-    }
-
-    if (!isFalseEspecialidad) {
-        especialidad = " and especialidad like '%25" + especialidad + "%25'";
-    } else {
-        especialidad = '';
-    }
-
-    if (!isFalseModelos_educativos) {
-        modelos_educativos =
-            " and modelos_educativos like '%25" + modelos_educativos + "%25'";
-    } else {
-        modelos_educativos = '';
-    }
-
-    url =
-        'https://www.datos.gov.co/resource/xax6-k7eu.json?' +
-        query +
-        zona +
-        nivel +
-        grado +
-        jornada +
-        discapacidades +
-        especialidad +
-        modelos_educativos +
-        '&$$app_token=K48oToivS8HmR2UDvdG3yrmeJ';
-
-    $.getJSON(url, function(data, textstatus) {
-        if (data.length == 0) {
-            $('#NotFound')
-                .html(`<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
-                            <div class="alert alert-danger" role="alert">
-                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                            <span class="sr-only">Información de busqueda:</span>
-                            Sin resultados, intente con filtros diferentes
-                            </div>
-                         </div>`);
-            $('#ResultSearch').html('');
-        } else {
-            var notfound = `<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
-                            <div class="alert alert-info" role="alert">
-                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                            <span class="sr-only">Información de busqueda:</span>
-                            Se encontraron ${data.length} registros -->
-                            Puedes seleccionar tres colegios para realizar la comparación
-                            </div>
-                         </div>`;
-
-            $('#NotFound').html(notfound);
-
-            var cards = '';
-
-            $.each(data, function(i, entry) {
-                if (entry.idiomas === undefined) { entry.idiomas = 'No aplica' }
-                if (entry.estrato_socio_economico === undefined) { entry.estrato_socio_economico = 'No aplica' }
-                if (entry.especialidad === undefined) { entry.especialidad = 'No aplica' }
-                if (entry.modelos_educativos === undefined) { entry.modelos_educativos = 'No aplica' }
-                if (entry.discapacidades === undefined) { entry.discapacidades = 'No aplica' }
-                if (entry.modelos_educativos === undefined) { entry.modelos_educativos = 'No aplica' }
-                cards =
-                    cards +
-                    `<div class="card mb-3" id="InfoAll">
-                            
-                            <div class="card-body">
-                              
-                                <h6 class="" >
-                                   
-                                    <input type="checkbox" onclick="CheckFunction()" class="form-check-input" id="${entry.nombreestablecimiento}">
-                                    <label class="custom-control-label" for="defaultUnchecked"> Elegir este colegio para comparar</label>
-                               </h6>
-
-                                <h6 class="card-title mb-1">
-                                    <a href="#">${entry.nombreestablecimiento}</a>
-                                </h6>
-                                <p class="card-text small">${entry.direccion}                                
-                                </p>
-                                <p class="card-text small">
-                                    Zona: 
-                                    ${entry.zona}                                
-                                </p>
-                                <p class="card-text small">
-                                    Jornada: 
-                                    ${entry.jornada}                                
-                                </p>
-                                <p class="card-text small">
-                                    Grados: 
-                                    ${entry.grados}                                
-                                </p>
-                                <p class="card-text small">
-                                    Discapacidades: 
-                                    ${entry.discapacidades}                                
-                                </p>
-                                <p class="card-text small">
-                                    Especialidad: 
-                                    ${entry.especialidad}                                
-                                </p>
-                                <p class="card-text small">
-                                    Modelos Educativos: 
-                                    ${entry.modelos_educativos}                                
-                                </p>
-
-
-                            </div>
-                            <hr class="my-0">
-                            <div class="card-body py-2 small">
-                                
-                                <a class="mr-3 d-inline-block" href="javascript:void(0)" onclick="ChangeTab('${entry.direccion}', '${entry.nombreestablecimiento}')">
-                                    <i class="fa fa-fw fa-map"></i>
-                                    Mapa
-                                </a>
-                               
-                            </div>
-                            <div class="card-footer small text-muted">
-                                Ultima actualización hace 2 meses
-                            </div>
-                        </div>`;
-            });
-            $('#ResultSearch').html(cards);
-        }
-
-        $('#Results').show();
-        $('#ResultMenu').addClass('active');
-        $('#FilterMenu').removeClass('active');
-        $('#MapMenu').removeClass('active');
-
-        document.getElementById('loader').style.display = 'none';
-    });
+    readJson();
 }
+
+
 
 function ChangeTab(address, schoolName) {
     showMap();
@@ -569,12 +399,9 @@ function generatePDF(fileName) {
     console.log(doc);
     var opt = demoFromHTML();
 
-    //var ipmt = convertToBase64();
 
 
-    //var ooo = Base64.encode(opt);
 
-    var opm = 'JVBERi0xLjMKMyAwIG9iago8PC9UeXBlIC9QYWdlCi9QYXJlbnQgMSAwIFIKL1Jlc291cmNlcyAyIDAgUgovTWVkaWFCb3ggWzAgMCA2MTIuMDAgNzkyLjAwXQovQ29udGVudHMgNCAwIFIKPj4KZW5kb2JqCjQgMCBvYmoKPDwvTGVuZ3RoIDk5ND4+CnN0cmVhbQowLjIwIHcKMCBHCnEKcSBCVCAwIGcgNDAuMDAgNzAwLjc1IFRkCjAgLTE4LjAwIFRkCjAuMTI5IDAuMTQ1IDAuMTYxIHJnCi9GMSAxMi4wMCBUZiAoU2VsZWN0ICJMb2dvdXQiIGJlbG93IGlmIHlvdSBhcmUgcmVhZHkgdG8gZW5kIHlvdXIgY3VycmVudCBzZXNzaW9uLikgVGoKRVQgUQpxIEJUIDAgZyA0MC4wMCA2NzEuNTAgVGQKMCAtMTMuMjAgVGQKMC4wMDAgMC40ODIgMS4wMDAgcmcKL0YyIDEyLjAwIFRmIChJTlNUIERFIEJUTyBURUMgQ09NRVJDSUFMIFBJVEFHT1JBUykgVGoKRVQgUQpxIEJUIDAgZyA0MC4wMCA2NTUuMzAgVGQKMCAtMTQuNDAgVGQKMC4xMjkgMC4xNDUgMC4xNjEgcmcKL0YxIDkuNjAgVGYgKEtSIDUgMTEgNjcpIFRqCkVUIFEKcSBCVCAwIGcgNDAuMDAgNjI4LjkwIFRkCjAgLTE0LjQwIFRkCi9GMSA5LjYwIFRmIChab25hOiBVUkJBTkEpIFRqCkVUIFEKcSBCVCAwIGcgNDAuMDAgNjAyLjUwIFRkCjAgLTE0LjQwIFRkCi9GMSA5LjYwIFRmIChKb3JuYWRhOiBDT01QTEVUQSkgVGoKRVQgUQpxIEJUIDAgZyA0MC4wMCA1NzYuMTAgVGQKMCAtMTQuNDAgVGQKL0YxIDkuNjAgVGYgKEdyYWRvczogNiw3LDgsOSwxMCwxMSkgVGoKRVQgUQpxIEJUIDAgZyA0MC4wMCA1NDkuNzAgVGQKMCAtMTQuNDAgVGQKL0YxIDkuNjAgVGYgKEVzcGVjaWFsaWRhZDogQ09NRVJDSUFMLEFDQUTJTUlDQSkgVGoKRVQgUQpxIEJUIDAgZyA0MC4wMCA1MjMuMzAgVGQKMCAtMTQuNDAgVGQKL0YxIDkuNjAgVGYgKE1vZGVsb3MgRWR1Y2F0aXZvczogRURVQ0FDSdNOIFRSQURJQ0lPTkFMKSBUagpFVCBRCnEgQlQgMCBnIDQwLjAwIDUwOC45MCBUZAowIC0xNC40MCBUZAowLjAwMCAwLjQ4MiAxLjAwMCByZwovRjEgOS42MCBUZiAoTWFwYSkgVGoKRVQgUQpxIEJUIDAgZyA0MC4wMCA0ODUuNTAgVGQKMCAtMTQuNDAgVGQKMC41MjUgMC41NTcgMC41ODggcmcKL0YxIDkuNjAgVGYgKFVsdGltYSBhY3R1YWxpemFjafNuIGhhY2UgOCBtZXNlcykgVGoKRVQgUQpRCmVuZHN0cmVhbQplbmRvYmoKMSAwIG9iago8PC9UeXBlIC9QYWdlcwovS2lkcyBbMyAwIFIgXQovQ291bnQgMQo+PgplbmRvYmoKNSAwIG9iago8PC9CYXNlRm9udC9IZWx2ZXRpY2EvVHlwZS9Gb250Ci9FbmNvZGluZy9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUvVHlwZTE+PgplbmRvYmoKNiAwIG9iago8PC9CYXNlRm9udC9IZWx2ZXRpY2EtQm9sZC9UeXBlL0ZvbnQKL0VuY29kaW5nL1dpbkFuc2lFbmNvZGluZwovU3VidHlwZS9UeXBlMT4+CmVuZG9iago3IDAgb2JqCjw8L0Jhc2VGb250L0hlbHZldGljYS1PYmxpcXVlL1R5cGUvRm9udAovRW5jb2RpbmcvV2luQW5zaUVuY29kaW5nCi9TdWJ0eXBlL1R5cGUxPj4KZW5kb2JqCjggMCBvYmoKPDwvQmFzZUZvbnQvSGVsdmV0aWNhLUJvbGRPYmxpcXVlL1R5cGUvRm9udAovRW5jb2RpbmcvV2luQW5zaUVuY29kaW5nCi9TdWJ0eXBlL1R5cGUxPj4KZW5kb2JqCjkgMCBvYmoKPDwvQmFzZUZvbnQvQ291cmllci9UeXBlL0ZvbnQKL0VuY29kaW5nL1dpbkFuc2lFbmNvZGluZwovU3VidHlwZS9UeXBlMT4+CmVuZG9iagoxMCAwIG9iago8PC9CYXNlRm9udC9Db3VyaWVyLUJvbGQvVHlwZS9Gb250Ci9FbmNvZGluZy9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUvVHlwZTE+PgplbmRvYmoKMTEgMCBvYmoKPDwvQmFzZUZvbnQvQ291cmllci1PYmxpcXVlL1R5cGUvRm9udAovRW5jb2RpbmcvV2luQW5zaUVuY29kaW5nCi9TdWJ0eXBlL1R5cGUxPj4KZW5kb2JqCjEyIDAgb2JqCjw8L0Jhc2VGb250L0NvdXJpZXItQm9sZE9ibGlxdWUvVHlwZS9Gb250Ci9FbmNvZGluZy9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUvVHlwZTE+PgplbmRvYmoKMTMgMCBvYmoKPDwvQmFzZUZvbnQvVGltZXMtUm9tYW4vVHlwZS9Gb250Ci9FbmNvZGluZy9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUvVHlwZTE+PgplbmRvYmoKMTQgMCBvYmoKPDwvQmFzZUZvbnQvVGltZXMtQm9sZC9UeXBlL0ZvbnQKL0VuY29kaW5nL1dpbkFuc2lFbmNvZGluZwovU3VidHlwZS9UeXBlMT4+CmVuZG9iagoxNSAwIG9iago8PC9CYXNlRm9udC9UaW1lcy1JdGFsaWMvVHlwZS9Gb250Ci9FbmNvZGluZy9XaW5BbnNpRW5jb2RpbmcKL1N1YnR5cGUvVHlwZTE+PgplbmRvYmoKMTYgMCBvYmoKPDwvQmFzZUZvbnQvVGltZXMtQm9sZEl0YWxpYy9UeXBlL0ZvbnQKL0VuY29kaW5nL1dpbkFuc2lFbmNvZGluZwovU3VidHlwZS9UeXBlMT4+CmVuZG9iagoxNyAwIG9iago8PC9CYXNlRm9udC9aYXBmRGluZ2JhdHMvVHlwZS9Gb250Ci9FbmNvZGluZy9TdGFuZGFyZEVuY29kaW5nCi9TdWJ0eXBlL1R5cGUxPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1Byb2NTZXQgWy9QREYgL1RleHQgL0ltYWdlQiAvSW1hZ2VDIC9JbWFnZUldCi9Gb250IDw8Ci9GMSA1IDAgUgovRjIgNiAwIFIKL0YzIDcgMCBSCi9GNCA4IDAgUgovRjUgOSAwIFIKL0Y2IDEwIDAgUgovRjcgMTEgMCBSCi9GOCAxMiAwIFIKL0Y5IDEzIDAgUgovRjEwIDE0IDAgUgovRjExIDE1IDAgUgovRjEyIDE2IDAgUgovRjEzIDE3IDAgUgo+PgovWE9iamVjdCA8PAo+Pgo+PgplbmRvYmoKMTggMCBvYmoKPDwKL1Byb2R1Y2VyIChqc1BERiAxLjMuMiAyMDE2LTA5LTMwVDIwOjMzOjE4Ljg2N1o6amFtZXNoYWxsKQovQ3JlYXRpb25EYXRlIChEOjIwMjAwOTIyMjEyMDQ1LTA1JzAwJykKPj4KZW5kb2JqCjE5IDAgb2JqCjw8Ci9UeXBlIC9DYXRhbG9nCi9QYWdlcyAxIDAgUgovT3BlbkFjdGlvbiBbMyAwIFIgL0ZpdEggbnVsbF0KL1BhZ2VMYXlvdXQgL09uZUNvbHVtbgo+PgplbmRvYmoKeHJlZgowIDIwCjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMTE2MSAwMDAwMCBuIAowMDAwMDAyNDU1IDAwMDAwIG4gCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDExOCAwMDAwMCBuIAowMDAwMDAxMjE4IDAwMDAwIG4gCjAwMDAwMDEzMDggMDAwMDAgbiAKMDAwMDAwMTQwMyAwMDAwMCBuIAowMDAwMDAxNTAxIDAwMDAwIG4gCjAwMDAwMDE2MDMgMDAwMDAgbiAKMDAwMDAwMTY5MSAwMDAwMCBuIAowMDAwMDAxNzg1IDAwMDAwIG4gCjAwMDAwMDE4ODIgMDAwMDAgbiAKMDAwMDAwMTk4MyAwMDAwMCBuIAowMDAwMDAyMDc2IDAwMDAwIG4gCjAwMDAwMDIxNjggMDAwMDAgbiAKMDAwMDAwMjI2MiAwMDAwMCBuIAowMDAwMDAyMzYwIDAwMDAwIG4gCjAwMDAwMDI2OTEgMDAwMDAgbiAKMDAwMDAwMjgxMiAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDIwCi9Sb290IDE5IDAgUgovSW5mbyAxOCAwIFIKPj4Kc3RhcnR4cmVmCjI5MTYKJSVFT0Y=';
     var rril0 = pdfFileBase64;
     enviar(rril0, 'ColegiosBogota1.pdf');
 
@@ -762,4 +589,215 @@ function showMap() {
 
         google.maps.event.trigger(map, 'resize');
     }, 200);
+}
+
+
+function readJson() {
+
+    $.ajax({
+        dataType: 'json',
+        url: 'https://oscarromero1717.github.io/TuColeCerca/response.json',
+        success: function(datos) {
+            if (datos.length > 0) {
+
+                allInfo = null;
+                var result = ApplyFilter(datos)
+                cardResult(result);
+                allInfo = datos;
+            }
+
+        },
+        error: function() { alert("Error leyendo fichero "); }
+    });
+
+}
+
+function ApplyFilter(datos) {
+
+
+
+    discapacidades = document.getElementById('discapacity').value;
+    zona = document.getElementById('Zone').value;
+    clase = document.getElementById('Class').value;
+    especialidad = document.getElementById('Specialties').value;
+    enfasis = document.getElementById('EMPHASIS').value;
+
+    talentos = document.getElementById('Talents').value;
+
+    var isFalseDiscapacity = discapacidades == 'false';
+    var isFalseZona = zona == 'false';
+    var isFalseclase = clase == 'false';
+    var isFalseEspecialidad = especialidad == 'false';
+    var isFalseEnfasis = enfasis == 'false';
+
+    var isFalseTalentos = talentos == 'false';
+
+
+
+    var prefilter;
+
+    if (!isFalseDiscapacity) {
+
+        prefilter = $(datos).filter(function(i, n) { return n.discapacidades === discapacidades });
+
+
+
+    } else {
+        prefilter = datos;
+    }
+
+
+
+
+    if (!isFalseZona) {
+
+        prefilter = $(prefilter).filter(function(i, n) { return n.nombre_localidad === zona });
+
+    }
+
+    if (!isFalseclase) {
+
+        prefilter = $(prefilter).filter(function(i, n) { return n.clase === clase });
+
+    }
+
+
+
+    if (!isFalseEspecialidad) {
+
+        prefilter = $(prefilter).filter(function(i, n) { return n.enfasis_para_el_caracter_academico_de_la_media === especialidad });
+
+    }
+
+    if (!isFalseEnfasis) {
+
+        prefilter = $(prefilter).filter(function(i, n) { return n.caracter_para_la_media === enfasis });
+
+    }
+
+    return prefilter;
+
+
+}
+
+function cardResult(data) {
+
+    if (data.length == 0) {
+        $('#NotFound')
+            .html(`<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+                        <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Información de busqueda:</span>
+                        Sin resultados, intente con filtros diferentes
+                        </div>
+                     </div>`);
+        $('#ResultSearch').html('');
+    } else {
+        var notfound = `<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+                        <div class="alert alert-info" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Información de busqueda:</span>
+                        Se encontraron ${data.length} registros -->
+                        Puedes seleccionar tres colegios para realizar la comparación
+                        </div>
+                     </div>`;
+
+        $('#NotFound').html(notfound);
+
+        var cards = '';
+
+        for (var i = 0; i < data.length; i++) {
+
+            if (data[i].idiomas === undefined) { data[i].idiomas = 'No aplica' }
+            if (data[i].estrato_socio_economico === undefined) { data[i].estrato_socio_economico = 'No aplica' }
+            if (data[i].especialidad_para_la_media === undefined) { data[i].especialidad_para_la_media = 'No aplica' }
+            if (data[i].modelos_educativos === undefined) { data[i].modelos_educativos = 'No aplica' }
+            if (data[i].discapacidad_por_categoria === undefined) { data[i].discapacidad_por_categoria = 'No aplica' }
+            if (data[i].modelos_educativos === undefined) { data[i].modelos_educativos = 'No aplica' }
+            if (data[i].clase === undefined) { entry.clase = 'No aplica' }
+            if (data[i].talentos_o_capacidades_excepcionales === undefined) { data[i].talentos_o_capacidades_excepcionales = 'No aplica' }
+
+
+
+            cards =
+                cards +
+                `<div class="card mb-3" id="InfoAll">
+                            
+                            <div class="card-body">
+                              
+                                <h6 class="" >
+                                   
+                                    <input type="checkbox" onclick="CheckFunction()" class="form-check-input" id="${data[i].nombre_establecimiento_educativo}">
+                                    <label class="custom-control-label" for="defaultUnchecked"> Elegir este colegio para comparar</label>
+                               </h6>
+
+                                <h6 class="card-title mb-1">
+                                    <a href="#">${data[i].nombre_establecimiento_educativo}</a>
+                                </h6>
+                                <p class="card-text small">${data[i].direccion1_georeferenciacion}                                
+                                </p>
+                                <p class="card-text small">
+                                Localidad : 
+                                ${data[i].nombre_localidad}, barrio  ${data[i].barrio1_geo}                                  
+                               </p>
+
+                               <p class="card-text small">
+                                    Clase: 
+                                    ${data[i].clase}                                
+                                </p>
+                               
+
+                                <p class="card-text small">
+                                    Discapacidades: 
+                                    ${data[i].discapacidad_por_categoria}                                
+                                </p>
+
+                                <p class="card-text small">
+                                    Talentos excepcionales: 
+                                    ${data[i].talentos_o_capacidades_excepcionales}                                
+                                </p>
+                                
+                              
+                                
+                                <p class="card-text small">
+                                    Especialidad: 
+                                    ${data[i].especialidad_para_la_media}                                
+                                </p>
+                                <p class="card-text small">
+                                    Modelos Educativos: 
+                                    ${data[i].modelos_educativos}                                
+                                </p>
+
+
+                            </div>
+                            <hr class="my-0">
+                            <div class="card-body py-2 small">
+                                
+                                <a class="mr-3 d-inline-block" href="javascript:void(0)" onclick="ChangeTab('${data[i].direccion1_georeferenciacion}', '${data[i].nombre_establecimiento_educativo}')">
+                                    <i class="fa fa-fw fa-map"></i>
+                                    Mapa
+                                </a>
+                               
+                            </div>
+                            <div class="card-footer small text-muted">
+                                Ultima actualización hace 2 meses
+                            </div>
+                        </div>`;
+
+            $('#ResultSearch').html(cards);
+        }
+
+        $('#Results').show();
+        $('#ResultMenu').addClass('active');
+        $('#FilterMenu').removeClass('active');
+        $('#MapMenu').removeClass('active');
+
+        document.getElementById('loader').style.display = 'none';
+
+
+    }
+}
+
+function createInfoCompare(id) {
+    return $(allInfo).filter(function(i, n) { return n.nombre_establecimiento_educativo === id });
 }
