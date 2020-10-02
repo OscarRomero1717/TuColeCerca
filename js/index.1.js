@@ -458,8 +458,9 @@ function demoFromHTML() {
 
     pdfs.fromHTML(document.body);
 
-    pdfs.save("test.pdf");
+    //pdfs.save("test.pdf");
 }
+
 
 function enviar(pdf, nombre, correo) {
     Email.send({
