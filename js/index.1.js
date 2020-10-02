@@ -4,6 +4,7 @@ var pdfFileBase64 = "";
 var ListaRanking = [];
 var divResult = "";
 var allInfo;
+var listaRankingPrint = [];
 
 function initMap() {
     var heatMapData = [
@@ -156,7 +157,6 @@ function ToggleFilters() {
 function PrintInfo(data, esRankin) {
     var cardsinfo = "";
 
-    var ranking = algoritmRanking(data);
 
     if (data[0].idiomas === undefined) {
         data.idiomas = "No aplica";
@@ -180,7 +180,8 @@ function PrintInfo(data, esRankin) {
         data.talentos_o_capacidades_excepcionales = "No aplica";
     }
 
-    if (esRankin) { cardsinfo = cardsinfo + createCards(false, data[0]); } else { cardsinfo = cardsinfo + createCards(false, data[0]); }
+    cardsinfo = cardsinfo + createCards(false, data[0]);
+
 
 
 
@@ -191,7 +192,7 @@ function PrintInfo(data, esRankin) {
 function CheckFunction() {
     var index = 0;
 
-    //$("#sendMailmodal").html("");
+
     $("#ComparerDiv").html("");
     $("input[type=checkbox]:checked").each(function() {
         if ($("input[type=checkbox]:checked").length >= 3) {
@@ -772,15 +773,17 @@ function createCards(withChecks, data) {
 function algoritmRanking(colegio)
 {
   var distnacia=0; /// 2
-  var discapacidades= 0 // 1.5 ()
+  var discapacidades= 0 // 1.25 (4)
+  var capacidadExcepcionales=0 //0.25
   var otros  = 0  //1.5 (bilingue 3 --  0.75 2 -- 0.5 1 -- 0.25/ 21 --0.75 -- 14 05,)
   var idiomas= 0; //0.75
 
   var numeroDiscapacidades = colegio[0].discapacidad_por_categoria;
   var numeroIdiomas = colegio[0].biling_e;
   var numeroEpecialidades = colegio[0].enfasis_para_el_caracter_academico_de_la_media;
+  var capacidades= colegio[0].talentos_o_capacidades_excepcionales
 
-
+  capacidadExcepcionales = capacidades != undefined && numeroDiscapacidades != 'No aplica' ? 0.25:0;
   var arrayDiscapacidades = numeroDiscapacidades != undefined && numeroDiscapacidades != 'No aplica' ? numeroDiscapacidades.split('-'): 0;
   discapacidades= arrayDiscapacidades.length >0?calculteDiscapacity(arrayDiscapacidades.length):0;
 
@@ -790,7 +793,7 @@ function algoritmRanking(colegio)
   var arrayEpecialidad =  numeroEpecialidades != undefined && numeroEpecialidades != 'No aplica'? numeroEpecialidades.split('-'): 0;
   otros=arrayEpecialidad.length >0?calculteEpecilatys(arrayEpecialidad.length):0;
 
-  return  otros+idiomas+discapacidades+distnacia;
+  return  otros+idiomas+discapacidades+distnacia+capacidadExcepcionales;
 
 }
 
@@ -821,30 +824,36 @@ function compare()
     var index = 0;
     $("input[type=checkbox]:checked").each(function() {
     if ($("input[type=checkbox]:checked").length >= 3) {
-
-        //showComparations();
-        //clearMarkers();
+        
+        
         var idColegio = $("input[type=checkbox]:checked")[index].id;
         var url = createInfoCompare(idColegio);
         var ranking=algoritmRanking(url);
-        var ranqkincolegio={puntaje:ranking,colegio:url,ranking:index};
+        var ranqkincolegio={puntaje:ranking,colegio:url};
         ListaRanking.push(ranqkincolegio)
-        
         index++;
-        // generatePDF('barco');
+       
     }
     });
+
+        
+     ListaRanking=ListaRanking.sort(function(a, b) {
+       return b.puntaje - a.puntaje;
+    });
+
+    for (var i = 0; i < ListaRanking.length; i++) {
+        
+        var listaOrdenada={puntaje:ListaRanking[i].puntaje,colegio:ListaRanking[i].colegio,index: i+1}
+        
+        orderCardsCompare(listaOrdenada);
+     }
+
     generatePDF();
     alert('Se ha generado un archivo pdf que se desacargara en su equipo con el resultado de la comparación');
     $("#sendMailmodal").show();
     
     $("#RootComparerDiv").hide();
     $("#ComparerDiv").hide();
-    
-
-    for (var i = 0; i < ListaRanking.length; i++) {
-    
-    }
 
 }
 else
@@ -892,4 +901,130 @@ function validarPDF()
 
 
 
+}
+
+function printCompare(data){
+
+
+    return `<div class="card mb-3" id="InfoAll">
+      
+               <div class="card-body">   
+                <h6 class="" >  ${data.index} </h6>
+                <h6 class="card-title mb-1">
+                      <a href="#">${data.colegio[0].nombre_establecimiento_educativo}</a>
+                </h6>
+                  <p class="card-text small">${data.colegio[0].direccion1_georeferenciacion}</p>
+                  <p class="card-text small">
+                  Localidad :${data.colegio[0].nombre_localidad}, barrio  ${data.colegio.barrio1_geo}</p>
+    
+                <p class="card-text small">
+                      Clase: 
+                      ${data.colegio[0].clase}                                
+                  </p>
+                
+    
+                  <p class="card-text small">
+                      Discapacidades: 
+                      ${
+                        data.colegio[0].discapacidad_por_categoria
+                      }                                
+                  </p>
+    
+                  <p class="card-text small">
+                      Talentos excepcionales: 
+                      ${
+                        data.colegio[0].talentos_o_capacidades_excepcionales
+                      }                                
+                  </p>
+                  
+                
+                  
+                  <p class="card-text small">
+                      Especialidad: 
+                      ${
+                        data.colegio[0].enfasis_para_el_caracter_academico_de_la_media
+                      }                                
+                  </p>
+                  <p class="card-text small">
+                      Modelos Educativos: 
+                      ${data.colegio[0].enfasis_para_el_caracter_academico_de_la_media}                                
+                  </p>
+    
+    
+              </div>
+              <hr class="my-0">
+              <div class="card-body py-2 small">
+                  
+                  
+                
+              </div>
+              <div class="card-footer small text-muted">
+                  Ultima actualización hace 2 meses
+              </div>
+            </div>
+            `;
+}
+
+
+function orderCardsCompare(data) {
+    var cardsinfo = "";
+    
+
+    if (data.colegio[0].biling_e === undefined) {
+        data.biling_e = "No aplica";
+    }
+    if (data.colegio[0].estrato_geo === undefined) {
+        data.estrato_geo = "No aplica";
+    }
+    if (data.colegio[0].enfasis_para_el_caracter_academico_de_la_media === undefined) {
+        data.enfasis_para_el_caracter_academico_de_la_media = "No aplica";
+    }
+    if (data.colegio[0].barrio1_geo === undefined) {
+        data.barrio1_geo = "No aplica";
+    }
+    if (data.colegio[0].discapacidad_por_categoria === undefined) {
+        data.discapacidad_por_categoria = "No aplica";
+    }
+    if (data.colegio[0].nombre_upz === undefined) {
+        data.nombre_upz = "No aplica";
+    }
+    if (data.colegio[0].talentos_o_capacidades_excepcionales === undefined) {
+        data.talentos_o_capacidades_excepcionales = "No aplica";
+    }
+
+    if (data.colegio[0].genero === undefined) {
+        data.genero = "No aplica";
+    }
+
+    if (data.colegio[0].email === undefined) {
+        data.email = "No aplica";
+    }
+
+    if (data.colegio[0].telefono === undefined) {
+        data.telefono = "No aplica";
+    }
+
+    if (data.colegio[0].clase === undefined) {
+        data.clase = "No aplica";
+    }
+
+    if (data.colegio[0].calendario === undefined) {
+        data.calendario = "No aplica";
+    }
+
+    if (data.colegio[0].grupos_etnicos === undefined) {
+        data.grupos_etnicos = "No aplica";
+    }
+
+    if (data.colegio[0].genero === undefined) {
+        data.genero = "No aplica";
+    }
+    cardsinfo = cardsinfo + printCompare( data); 
+
+    $("#ComparerDiv").append(cardsinfo);
+    divResult = divResult + cardsinfo;
+
+   
+
+    
 }
