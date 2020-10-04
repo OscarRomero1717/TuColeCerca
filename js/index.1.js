@@ -6,6 +6,8 @@ var divResult = "";
 var allInfo;
 var listaRankingPrint = [];
 
+var distanciaSave = [];
+
 function initMap() {
     var heatMapData = [
         { location: new google.maps.LatLng(4.719109, -74.031375), weight: 1 },
@@ -224,6 +226,8 @@ function createAPIUrl(idColegio) {
 }
 
 function Search() {
+
+    //Testcallback();
     clearMarkers();
     $("#Filters").hide();
     document.getElementById("loader").style.display = "block";
@@ -238,7 +242,7 @@ function ChangeTab(address, schoolName) {
 
 function ChangeTabCompartationMAP(address, schoolName) {
     showMap();
-    console.log(address);
+
     SetDireccion(address, schoolName);
     SetDireccionUser();
 }
@@ -347,7 +351,7 @@ function SetDireccionUser() {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
             for (var i = 0; i < results.length; i++) {
                 console.log(results[i]);
-                createMarker(results[i]);
+                createMarker(results[i], 'Su dirección');
             }
             map.setCenter(results[0].geometry.location);
         }
@@ -355,17 +359,15 @@ function SetDireccionUser() {
 }
 
 function generatePDF(fileName) {
-    $("#content").append(divResult);
+    //$("#content").append(divResult);
 
     var doc = new jsPDF();
     doc.fromHTML($("body").get(0), 15, 15, {
         width: 170,
     });
     console.log(doc);
-    var opt = demoFromHTML();
+    demoFromHTML();
 
-    //var rril0 = pdfFileBase64;
-    //enviar(rril0, "ColegiosBogota1.pdf");
 }
 
 function convertToBase64() {
@@ -511,15 +513,38 @@ function setMapOnAll(map) {
 }
 
 
-function readJson() {
+function newCompare() {
+    allInfo = null;
+
     $.ajax({
         dataType: "json",
         url: "https://oscarromero1717.github.io/TuColeCerca/response.json",
         success: function(datos) {
             if (datos.length > 0) {
-                // CalculteRanking('osc');
+                allInfo = datos;
+            }
+        },
+        error: function() {
+            alert("Error leyendo fichero ");
+        },
+    });
+
+}
+
+function readJson(esBusquenombre, nombre) {
+    $.ajax({
+        dataType: "json",
+        url: "https://oscarromero1717.github.io/TuColeCerca/response.json",
+        success: function(datos) {
+            if (datos.length > 0) {
+
                 allInfo = null;
-                var result = ApplyFilter(datos);
+                if (esBusquenombre) {
+                    var result = apliFilterName(datos, nombre);
+                } else {
+                    var result = ApplyFilter(datos);
+                }
+
                 cardResult(result);
                 allInfo = datos;
             }
@@ -528,6 +553,29 @@ function readJson() {
             alert("Error leyendo fichero ");
         },
     });
+}
+
+function searchByNama() {
+    name = document.getElementById("nameSearch").value;
+
+    if (name.length > 0) {
+        clearMarkers();
+        $("#Filters").hide();
+        document.getElementById("loader").style.display = "block";
+        readJson(true, name)
+
+    }
+}
+
+function apliFilterName(data, name) {
+
+
+    var queryToSearch = "";
+    var propertiesToSearch = "";
+    queryToSearch = addAmpersand(queryToSearch) + name;
+    propertiesToSearch =
+        addAmpersand(propertiesToSearch) + "nombre_establecimiento_educativo";
+    return filterItems(queryToSearch, data, propertiesToSearch)
 }
 
 function ApplyFilter(datos) {
@@ -708,8 +756,7 @@ function createCards(withChecks, data) {
               </p>
               <p class="card-text small">
               Localidad : 
-              ${data.nombre_localidad}, barrio  ${
-    data.barrio1_geo
+              ${data.nombre_localidad}, barrio  ${data.barrio1_geo
   }                                  
             </p>
 
@@ -751,7 +798,7 @@ function createCards(withChecks, data) {
           <hr class="my-0">
           <div class="card-body py-2 small">
               
-              <a class="mr-3 d-inline-block" href="javascript:void(0)" onclick="ChangeTab('${
+              <a class="mr-3 d-inline-block" href="javascript:void(0)" onclick= ${withChecks ? `"ChangeTab(` : `"ChangeTabCompartationMAP(`}'${
                 data.direccion1_georeferenciacion
               }', '${data.nombre_establecimiento_educativo}')">
                   <i class="fa fa-fw fa-map"></i>
@@ -770,9 +817,9 @@ function createCards(withChecks, data) {
 
 
 
-function algoritmRanking(colegio)
+function algoritmRanking(colegio,distancia)
 {
-  var distnacia=0; /// 2
+  var distnacia=0; /// 2.5
   var discapacidades= 0 // 1.25 (4)
   var capacidadExcepcionales=0 //0.25
   var otros  = 0  //1.5 (bilingue 3 --  0.75 2 -- 0.5 1 -- 0.25/ 21 --0.75 -- 14 05,)
@@ -782,7 +829,16 @@ function algoritmRanking(colegio)
   var numeroIdiomas = colegio[0].biling_e;
   var numeroEpecialidades = colegio[0].enfasis_para_el_caracter_academico_de_la_media;
   var capacidades= colegio[0].talentos_o_capacidades_excepcionales
+  var ditanciaCireccion = distancia;
+  var arraydistanbica= ditanciaCireccion.split('km');
+  ditanciaCireccion =arraydistanbica[0];
+  ditanciaCireccion=ditanciaCireccion.trim();
 
+  ditanciaCireccion=parseInt(ditanciaCireccion);
+
+  
+  
+  distnacia=ditanciaCireccion != undefined? distanceChangeRanking(ditanciaCireccion):0;
   capacidadExcepcionales = capacidades != undefined && numeroDiscapacidades != 'No aplica' ? 0.25:0;
   var arrayDiscapacidades = numeroDiscapacidades != undefined && numeroDiscapacidades != 'No aplica' ? numeroDiscapacidades.split('-'): 0;
   discapacidades= arrayDiscapacidades.length >0?calculteDiscapacity(arrayDiscapacidades.length):0;
@@ -797,6 +853,18 @@ function algoritmRanking(colegio)
 
 }
 
+
+function distanceChangeRanking(distance){
+    if(distance >=0 && distance <2){return 2.5;}
+    if(distance >=2 && distance <4){return 2.25;}
+    if(distance >=4 && distance <6){return 2;}
+    if(distance >=6 && distance <12){return 1.75;}
+    if(distance >=12 && distance <20){return 1.5;}
+    if(distance >=20 && distance <25){return 1.25;}
+    if(distance >=25 && distance <35){return 1;}
+    if(distance >=35 && distance <50){return 0.5;}
+    if(distance >=50 ){return 0.25;}
+}
 function calculteDiscapacity(numeroDiscapcidades)
 {
   if(numeroDiscapcidades ===1){return 0.3125}
@@ -820,40 +888,28 @@ function calculteEpecilatys(numeroEspecialidades)
 function compare()
 {
    if( validarDireccion()){
-
-    var index = 0;
+    document.getElementById("loader").style.display = "block";
+    $("#ComparerDiv").hide();
+    var index = 0; ListaRanking=[];
+    
+    $("#elementH").html("");
+    distanciaSave=[];
     $("input[type=checkbox]:checked").each(function() {
     if ($("input[type=checkbox]:checked").length >= 3) {
         
         
         var idColegio = $("input[type=checkbox]:checked")[index].id;
         var url = createInfoCompare(idColegio);
-        var ranking=algoritmRanking(url);
-        var ranqkincolegio={puntaje:ranking,colegio:url};
-        ListaRanking.push(ranqkincolegio)
+        url[0]= validarDireccionColegio(url[0]);
+        var rankingcolegio={nombre:url[0].nombre_establecimiento_educativo,colegio:url};
+        rankingcolegio.puntaje=0;
+        ListaRanking.push(rankingcolegio)
         index++;
        
     }
-    });
-
-        
-     ListaRanking=ListaRanking.sort(function(a, b) {
-       return b.puntaje - a.puntaje;
-    });
-
-    for (var i = 0; i < ListaRanking.length; i++) {
-        
-        var listaOrdenada={puntaje:ListaRanking[i].puntaje,colegio:ListaRanking[i].colegio,index: i+1}
-        
-        orderCardsCompare(listaOrdenada);
-     }
-
-    generatePDF();
-    alert('Se ha generado un archivo pdf que se desacargara en su equipo con el resultado de la comparación');
-    $("#sendMailmodal").show();
-    
-    $("#RootComparerDiv").hide();
-    $("#ComparerDiv").hide();
+    });        
+   
+   Testcallback(ListaRanking[0],ListaRanking[1],ListaRanking[2],document.getElementById("addressUser").value);
 
 }
 else
@@ -864,6 +920,9 @@ else
 
 
 }
+
+
+
 
 function validarDireccion ()
 {
@@ -907,19 +966,23 @@ function printCompare(data){
 
 
     return `<div class="card mb-3" id="InfoAll">
+           
       
                <div class="card-body">   
-                <h6 class="" >  ${data.index} </h6>
                 <h6 class="card-title mb-1">
-                      <a href="#">${data.colegio[0].nombre_establecimiento_educativo}</a>
+                      <a   href="#">${data.index}). ${data.colegio[0].nombre_establecimiento_educativo}</a>
                 </h6>
-                  <p class="card-text small">${data.colegio[0].direccion1_georeferenciacion}</p>
+                <br />
+                <br />
+                <br />
+                    
+                  <p class="card-text">Distancia con direccion digitada:  ${data.distancia} Dirección: ${data.colegio[0].direccion1_georeferenciacion}</p>
                   <p class="card-text small">
-                  Localidad :${data.colegio[0].nombre_localidad}, barrio  ${data.colegio.barrio1_geo}</p>
+                  Localidad : ${data.colegio[0].nombre_localidad}, Barrio: ${data.colegio[0].barrio1_geo}, Estrato socieconómico: ${data.colegio[0].estrato_geo}, Nombre UPZ : ${data.colegio[0].nombre_upz} </p>
     
                 <p class="card-text small">
                       Clase: 
-                      ${data.colegio[0].clase}                                
+                      ${data.colegio[0].clase} , Calendario: ${data.colegio[0].calendario} , Género: ${data.colegio[0].genero}, Grupo étnicos:   ${data.colegio[0].grupos_etnicos}                           
                   </p>
                 
     
@@ -940,28 +1003,45 @@ function printCompare(data){
                 
                   
                   <p class="card-text small">
-                      Especialidad: 
+                      Énfasis: 
                       ${
-                        data.colegio[0].enfasis_para_el_caracter_academico_de_la_media
+                        data.colegio[0].caracter_para_la_media
                       }                                
                   </p>
                   <p class="card-text small">
-                      Modelos Educativos: 
+                      Especialidades: 
                       ${data.colegio[0].enfasis_para_el_caracter_academico_de_la_media}                                
                   </p>
+                  <p class="card-text small">
+                      Idiomas: 
+                      ${data.colegio[0].biling_e}                                
+                  </p>
+                  <p class="card-text">
+                  Información básica:
+                 
+                  </p>
+                  <p class="card-text small">
+                  Teléfono: ${data.colegio[0].telefono}, Correo electrónico: ${data.colegio[0].email}
+                 
+                  </p>
+
+                  <br />
+                  <br />
+                  <br />
+                  <br />
     
     
               </div>
               <hr class="my-0">
               <div class="card-body py-2 small">
                   
-                  
+              <br />
+              <br />
                 
               </div>
-              <div class="card-footer small text-muted">
-                  Ultima actualización hace 2 meses
-              </div>
             </div>
+            <br />
+            <br />
             `;
 }
 
@@ -971,60 +1051,183 @@ function orderCardsCompare(data) {
     
 
     if (data.colegio[0].biling_e === undefined) {
-        data.biling_e = "No aplica";
+        data.colegio[0].biling_e = "No aplica";
     }
     if (data.colegio[0].estrato_geo === undefined) {
-        data.estrato_geo = "No aplica";
+        data.colegio[0].estrato_geo = "No aplica";
     }
     if (data.colegio[0].enfasis_para_el_caracter_academico_de_la_media === undefined) {
         data.enfasis_para_el_caracter_academico_de_la_media = "No aplica";
     }
     if (data.colegio[0].barrio1_geo === undefined) {
-        data.barrio1_geo = "No aplica";
+        data.colegio[0].barrio1_geo = "No aplica";
     }
     if (data.colegio[0].discapacidad_por_categoria === undefined) {
         data.discapacidad_por_categoria = "No aplica";
     }
     if (data.colegio[0].nombre_upz === undefined) {
-        data.nombre_upz = "No aplica";
+        data.colegio[0].nombre_upz = "No aplica";
     }
     if (data.colegio[0].talentos_o_capacidades_excepcionales === undefined) {
         data.talentos_o_capacidades_excepcionales = "No aplica";
     }
 
     if (data.colegio[0].genero === undefined) {
-        data.genero = "No aplica";
+        data.colegio[0].genero = "No aplica";
     }
 
     if (data.colegio[0].email === undefined) {
-        data.email = "No aplica";
+        data.colegio[0].email = "No aplica";
     }
 
     if (data.colegio[0].telefono === undefined) {
-        data.telefono = "No aplica";
+        data.colegio[0].telefono = "No aplica";
     }
 
     if (data.colegio[0].clase === undefined) {
-        data.clase = "No aplica";
+        data.colegio[0].clase = "No aplica";
     }
 
     if (data.colegio[0].calendario === undefined) {
-        data.calendario = "No aplica";
+        data.colegio[0].calendario = "No aplica";
     }
 
     if (data.colegio[0].grupos_etnicos === undefined) {
-        data.grupos_etnicos = "No aplica";
+        data.colegio[0].grupos_etnicos = "No aplica";
     }
 
-    if (data.colegio[0].genero === undefined) {
-        data.genero = "No aplica";
-    }
+    
     cardsinfo = cardsinfo + printCompare( data); 
 
-    $("#ComparerDiv").append(cardsinfo);
-    divResult = divResult + cardsinfo;
+    $("#elementH").append(cardsinfo);
+    //divResult = divResult + cardsinfo;
 
    
 
     
+}
+
+
+
+function Testcallback(direccion1, direccion2,direccion3,origen) { 
+   
+    var service = new google.maps.DistanceMatrixService;
+    service.getDistanceMatrix({
+      origins: [origen],
+      destinations: [direccion1.colegio[0].direccion1_georeferenciacion,direccion2.colegio[0].direccion1_georeferenciacion,direccion3.colegio[0].direccion1_georeferenciacion],
+      travelMode: 'DRIVING',
+      unitSystem: google.maps.UnitSystem.METRIC,
+      avoidHighways: false,
+      avoidTolls: false
+    }, callback);
+
+    function callback(response, status) {
+        if (status == 'OK') {
+          var origins = response.originAddresses;
+          var destinations = response.destinationAddresses;
+      
+          for (var i = 0; i < origins.length; i++) {
+            var results = response.rows[i].elements;
+            var listNEw=[];
+            listNEw.push(direccion1);
+            listNEw.push(direccion2);
+            listNEw.push(direccion3);
+            for (var j = 0; j < results.length; j++) {
+    
+                if  (results[j].status ===  'NOT_FOUND')
+                { 
+                    
+                    listNEw[j].distancia='55 km';
+                    distanciaSave.push(listNEw[j]);
+                }
+                else
+                {
+                    var element = results[j];
+                    var distance = element.distance.text;
+                    var duration = element.duration.text;
+                    var to = destinations[j]
+                    listNEw[j].distancia=distance;
+                    distanciaSave.push(listNEw[j]);
+                    
+                }
+    
+              
+            }
+          }
+        }
+        continueProcessCompare(distanciaSave);
+      }
+ 
+}
+
+
+
+
+function continueProcessCompare (distanciaSave){
+
+    
+    ListaRanking=distanciaSave;
+
+    for (var i = 0; i < ListaRanking.length; i++) {
+        var ranking=algoritmRanking(ListaRanking[i].colegio,ListaRanking[i].distancia);
+        ListaRanking[i].puntaje=ranking;
+        
+     }
+   
+
+
+    ListaRanking=ListaRanking.sort(function(a, b) {
+        return b.puntaje - a.puntaje;
+     });    
+    
+     for (var i = 0; i < ListaRanking.length; i++) {
+         
+         var listaOrdenada={puntaje:ListaRanking[i].puntaje,colegio:ListaRanking[i].colegio,index: i+1,distancia:ListaRanking[i].distancia}        
+         orderCardsCompare(listaOrdenada);
+      }
+    
+    
+      document.getElementById("loader").style.display = "none";
+    
+     generatePDF();
+     alert('Se ha generado un archivo pdf que se desacargara en su equipo con el resultado de la comparación');
+    
+     $("#sendMailmodal").show();
+     
+     $("#RootComparerDiv").hide();
+     $("#ComparerDiv").hide();
+     ListaRanking=[];
+     newCompare();
+   
+
+}
+
+function validarDireccionColegio(colegio){
+
+  var  direccion  = colegio.direccion1_georeferenciacion;
+
+  if(direccion.includes('KR') ){direccion =direccion.replace('KR', 'Carrera'); colegio.direccion1_georeferenciacion = direccion ;return colegio; }
+  if(direccion.includes('CR') ){direccion =direccion.replace('CR', 'Carrera');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+  if(direccion.includes('k') ){direccion =direccion.replace('K', 'Carrera');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+
+  if(direccion.includes('CL') ){direccion =direccion.replace('CL', 'Calle');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+  if(direccion.includes('C') ){direccion =direccion.replace('C', 'Calle');colegio.direccion1_georeferenciacion = direccion ;return colegio; }
+
+  if(direccion.includes('DG') ){direccion =direccion.replace('DG', 'Diagonal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+  if(direccion.includes('D') ){direccion =direccion.replace('D', 'Diagonal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+  if(direccion.includes('DIAG') ){direccion =direccion.replace('DIAG', 'Diagonal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+
+
+  if(direccion.includes('TR') ){direccion =direccion.replace('TR', 'Tranversal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+  if(direccion.includes('TV') ){direccion =direccion.replace('TV', 'Tranversal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+  if(direccion.includes('T') ){direccion =direccion.replace('T', 'Tranversal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+
+  if(direccion.includes('AK') ){direccion =direccion.replace('AK', 'Avenida carrera');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+  if(direccion.includes('AC') ){direccion =direccion.replace('AC', 'Avenida calle');colegio.direccion1_georeferenciacion = direccion ;return colegio; }
+
+
+
+  colegio[0].direccion1_georeferenciacion=direccion;
+  
+
 }
