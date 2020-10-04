@@ -226,8 +226,6 @@ function createAPIUrl(idColegio) {
 }
 
 function Search() {
-
-
     clearMarkers();
     $("#Filters").hide();
     document.getElementById("loader").style.display = "block";
@@ -274,16 +272,11 @@ function showMap() {
 
 function showFilter() {
     $("#Filters").show();
-
     $("#Results").hide();
     $("#RootComparerDiv").hide();
-
     $("#ComparerDiv").hide();
     $("#sendMailmodal").hide();
-
-
     $("#MapContent").hide();
-
     $("#FilterMenu").addClass("active");
     $("#ResultMenu").removeClass("active");
     $("#MapMenu").removeClass("active");
@@ -478,7 +471,25 @@ function enviar(pdf, nombre, correo) {
             name: nombre,
             data: pdf,
         }, ],
-    }).then((message) => alert('Se ha enviado el correo correctamente,en caso de no encontralo en su bandeja principal por favor busquelo en spam!'));
+    }).then((message) => {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'center',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+          
+          Toast.fire({
+            icon: 'success',
+            title: 'Se ha enviado el correo correctamente,en caso de no encontralo en su bandeja principal por favor busquelo en spam!'
+          })
+    })
+    //alert('Se ha enviado el correo correctamente,en caso de no encontralo en su bandeja principal por favor busquelo en spam!'));
 }
 
 function createMarker(places, name) {
@@ -537,20 +548,22 @@ function readJson(esBusquenombre, nombre) {
         url: "https://oscarromero1717.github.io/TuColeCerca/response.json",
         success: function(datos) {
             if (datos.length > 0) {
-
                 allInfo = null;
                 if (esBusquenombre) {
                     var result = apliFilterName(datos, nombre);
                 } else {
                     var result = ApplyFilter(datos);
                 }
-
                 cardResult(result);
                 allInfo = datos;
             }
         },
         error: function() {
-            alert("Error leyendo fichero ");
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Error leyendo fichero!'
+              })
         },
     });
 }
@@ -707,10 +720,8 @@ function cardResult(data) {
             if (data[i].talentos_o_capacidades_excepcionales === undefined) {
                 data[i].talentos_o_capacidades_excepcionales = "No aplica";
             }
-
             cards = cards + createCards(true, data[i]);
         }
-
         $("#ResultSearch").html(cards);
     }
     $("#Results").show();
@@ -883,44 +894,34 @@ function calculteEpecilatys(numeroEspecialidades)
   return   numeroEspecialidades*0.75/8;
 }
 
-function compare()
-{
-   if( validarDireccion()){
-    document.getElementById("loader").style.display = "block";
-    $("#ComparerDiv").hide();
-    var index = 0; ListaRanking=[];
-    
-    $("#elementH").html("");
-    distanciaSave=[];
-    $("input[type=checkbox]:checked").each(function() {
-    if ($("input[type=checkbox]:checked").length >= 3) {
+function compare(){
+    if( validarDireccion()){
+        document.getElementById("loader").style.display = "block";
+        $("#ComparerDiv").hide();
+        var index = 0; ListaRanking=[];
         
-        
-        var idColegio = $("input[type=checkbox]:checked")[index].id;
-        var url = createInfoCompare(idColegio);
-        url[0]= validarDireccionColegio(url[0]);
-        var rankingcolegio={nombre:url[0].nombre_establecimiento_educativo,colegio:url};
-        rankingcolegio.puntaje=0;
-        ListaRanking.push(rankingcolegio)
-        index++;
-       
+        $("#elementH").html("");
+        distanciaSave=[];
+        $("input[type=checkbox]:checked").each(function() {
+            if ($("input[type=checkbox]:checked").length >= 3) {
+                var idColegio = $("input[type=checkbox]:checked")[index].id;
+                var url = createInfoCompare(idColegio);
+                url[0]= validarDireccionColegio(url[0]);
+                var rankingcolegio={nombre:url[0].nombre_establecimiento_educativo,colegio:url};
+                rankingcolegio.puntaje=0;
+                ListaRanking.push(rankingcolegio)
+                index++;
+            }
+        });
+        Testcallback(ListaRanking[0],ListaRanking[1],ListaRanking[2],document.getElementById("addressUser").value);
+    }else{
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Para realizar la compración es necesario una direción de correo!'
+          })
+        }
     }
-    });        
-   
-   Testcallback(ListaRanking[0],ListaRanking[1],ListaRanking[2],document.getElementById("addressUser").value);
-
-}
-else
-{
-    alert('Para realizar la compración es necesario una direción para ejecutar el algortimo(distancia), por favor ingresela');
-}
-
-
-
-}
-
-
-
 
 function validarDireccion ()
 {
@@ -947,17 +948,21 @@ function validarPDF()
 
         }
         else{
-            alert('Por favor digite el correo a enviar la información')
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Por favor digite el correo a enviar la información'
+              })
         }
 
     }
     else(
-        alert('Por favor seleccione el pdf con el resultado de la comparación que se descargo en su équipo(seleccionar archivo)')
-
+        Swal.fire({
+            icon: 'warning',
+            title: '¡!',
+            text: 'Por favor seleccione el pdf con el resultado de la comparación que se descargo en su équipo(seleccionar archivo)'
+          })
     )
-
-
-
 }
 
 function printCompare(data){
@@ -1158,79 +1163,59 @@ function Testcallback(direccion1, direccion2,direccion3,origen) {
           }
         }
         continueProcessCompare(distanciaSave);
-      }
- 
+    } 
 }
-
-
-
-
 function continueProcessCompare (distanciaSave){
-
-    
     ListaRanking=distanciaSave;
-
     for (var i = 0; i < ListaRanking.length; i++) {
         var ranking=algoritmRanking(ListaRanking[i].colegio,ListaRanking[i].distancia);
         if  (ListaRanking[i].distancia==='55 km'){ListaRanking[i].distancia ='No se encontro direccion en google maps'};
         ListaRanking[i].puntaje=ranking;
-        
-     }
-   
-
-
+    }
     ListaRanking=ListaRanking.sort(function(a, b) {
         return b.puntaje - a.puntaje;
-     });    
+    }); 
+    for (var i = 0; i < ListaRanking.length; i++) {
+        var listaOrdenada={puntaje:ListaRanking[i].puntaje,colegio:ListaRanking[i].colegio,index: i+1,distancia:ListaRanking[i].distancia}
+        orderCardsCompare(listaOrdenada);
+    }
+    document.getElementById("loader").style.display = "none";
+    generatePDF();
+    Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: 'Se ha generado PDF',
+        showConfirmButton: false,
+        timer: 2000
+      })
+     //alert('Se ha generado un archivo pdf que se desacargara en su equipo con el resultado de la comparación');
     
-     for (var i = 0; i < ListaRanking.length; i++) {
-         
-         var listaOrdenada={puntaje:ListaRanking[i].puntaje,colegio:ListaRanking[i].colegio,index: i+1,distancia:ListaRanking[i].distancia}        
-         orderCardsCompare(listaOrdenada);
-      }
-    
-    
-      document.getElementById("loader").style.display = "none";
-    
-     generatePDF();
-     alert('Se ha generado un archivo pdf que se desacargara en su equipo con el resultado de la comparación');
-    
-     $("#sendMailmodal").show();
-     
+     $("#sendMailmodal").show();     
      $("#RootComparerDiv").hide();
      $("#ComparerDiv").hide();
      ListaRanking=[];
      newCompare();
-   
-
-}
+    }
 
 function validarDireccionColegio(colegio){
+    var  direccion  = colegio.direccion1_georeferenciacion;
+    if(direccion.includes('KR') ){direccion =direccion.replace('KR', 'Carrera'); colegio.direccion1_georeferenciacion = direccion ;return colegio; }
+    if(direccion.includes('CR') ){direccion =direccion.replace('CR', 'Carrera');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+    if(direccion.includes('k') ){direccion =direccion.replace('K', 'Carrera');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
 
-  var  direccion  = colegio.direccion1_georeferenciacion;
+    if(direccion.includes('CL') ){direccion =direccion.replace('CL', 'Calle');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+    if(direccion.includes('C') ){direccion =direccion.replace('C', 'Calle');colegio.direccion1_georeferenciacion = direccion ;return colegio; }
 
-  if(direccion.includes('KR') ){direccion =direccion.replace('KR', 'Carrera'); colegio.direccion1_georeferenciacion = direccion ;return colegio; }
-  if(direccion.includes('CR') ){direccion =direccion.replace('CR', 'Carrera');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
-  if(direccion.includes('k') ){direccion =direccion.replace('K', 'Carrera');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
-
-  if(direccion.includes('CL') ){direccion =direccion.replace('CL', 'Calle');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
-  if(direccion.includes('C') ){direccion =direccion.replace('C', 'Calle');colegio.direccion1_georeferenciacion = direccion ;return colegio; }
-
-  if(direccion.includes('DG') ){direccion =direccion.replace('DG', 'Diagonal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
-  if(direccion.includes('D') ){direccion =direccion.replace('D', 'Diagonal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
-  if(direccion.includes('DIAG') ){direccion =direccion.replace('DIAG', 'Diagonal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+    if(direccion.includes('DG') ){direccion =direccion.replace('DG', 'Diagonal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+    if(direccion.includes('D') ){direccion =direccion.replace('D', 'Diagonal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+    if(direccion.includes('DIAG') ){direccion =direccion.replace('DIAG', 'Diagonal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
 
 
-  if(direccion.includes('TR') ){direccion =direccion.replace('TR', 'Tranversal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
-  if(direccion.includes('TV') ){direccion =direccion.replace('TV', 'Tranversal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
-  if(direccion.includes('T') ){direccion =direccion.replace('T', 'Tranversal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+    if(direccion.includes('TR') ){direccion =direccion.replace('TR', 'Tranversal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+    if(direccion.includes('TV') ){direccion =direccion.replace('TV', 'Tranversal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+    if(direccion.includes('T') ){direccion =direccion.replace('T', 'Tranversal');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
 
-  if(direccion.includes('AK') ){direccion =direccion.replace('AK', 'Avenida carrera');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
-  if(direccion.includes('AC') ){direccion =direccion.replace('AC', 'Avenida calle');colegio.direccion1_georeferenciacion = direccion ;return colegio; }
-
-
-
-  colegio[0].direccion1_georeferenciacion=direccion;
-  
-
+    if(direccion.includes('AK') ){direccion =direccion.replace('AK', 'Avenida carrera');colegio.direccion1_georeferenciacion = direccion ;return colegio;  }
+    if(direccion.includes('AC') ){direccion =direccion.replace('AC', 'Avenida calle');colegio.direccion1_georeferenciacion = direccion ;return colegio; }
+    colegio[0].direccion1_georeferenciacion=direccion;
 }
