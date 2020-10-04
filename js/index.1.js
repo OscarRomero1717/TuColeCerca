@@ -227,7 +227,7 @@ function createAPIUrl(idColegio) {
 
 function Search() {
 
-    //Testcallback();
+
     clearMarkers();
     $("#Filters").hide();
     document.getElementById("loader").style.display = "block";
@@ -806,9 +806,7 @@ function createCards(withChecks, data) {
               </a>
             
           </div>
-          <div class="card-footer small text-muted">
-              Ultima actualización hace 2 meses
-          </div>
+         
         </div>
         ${withChecks ? `</div>` : ``}   
         
@@ -833,12 +831,12 @@ function algoritmRanking(colegio,distancia)
   var arraydistanbica= ditanciaCireccion.split('km');
   ditanciaCireccion =arraydistanbica[0];
   ditanciaCireccion=ditanciaCireccion.trim();
-
   ditanciaCireccion=parseInt(ditanciaCireccion);
 
   
   
   distnacia=ditanciaCireccion != undefined? distanceChangeRanking(ditanciaCireccion):0;
+
   capacidadExcepcionales = capacidades != undefined && numeroDiscapacidades != 'No aplica' ? 0.25:0;
   var arrayDiscapacidades = numeroDiscapacidades != undefined && numeroDiscapacidades != 'No aplica' ? numeroDiscapacidades.split('-'): 0;
   discapacidades= arrayDiscapacidades.length >0?calculteDiscapacity(arrayDiscapacidades.length):0;
@@ -976,7 +974,7 @@ function printCompare(data){
                 <br />
                 <br />
                     
-                  <p class="card-text">Distancia con direccion digitada:  ${data.distancia} Dirección: ${data.colegio[0].direccion1_georeferenciacion}</p>
+                  <p class="card-text">Distancia con direccion digitada:  ${data.distancia}, Dirección: ${data.colegio[0].direccion1_georeferenciacion}</p>
                   <p class="card-text small">
                   Localidad : ${data.colegio[0].nombre_localidad}, Barrio: ${data.colegio[0].barrio1_geo}, Estrato socieconómico: ${data.colegio[0].estrato_geo}, Nombre UPZ : ${data.colegio[0].nombre_upz} </p>
     
@@ -1110,11 +1108,15 @@ function orderCardsCompare(data) {
 
 
 function Testcallback(direccion1, direccion2,direccion3,origen) { 
+
+    var dir1= direccion1.colegio[0].direccion1_georeferenciacion+',Bogotá, Colombia';
+    var dir2=direccion2.colegio[0].direccion1_georeferenciacion+',Bogotá, Colombia';
+    var dir3= direccion3.colegio[0].direccion1_georeferenciacion+',Bogotá, Colombia';
    
     var service = new google.maps.DistanceMatrixService;
     service.getDistanceMatrix({
       origins: [origen],
-      destinations: [direccion1.colegio[0].direccion1_georeferenciacion,direccion2.colegio[0].direccion1_georeferenciacion,direccion3.colegio[0].direccion1_georeferenciacion],
+      destinations:[dir1,dir2,dir3],
       travelMode: 'DRIVING',
       unitSystem: google.maps.UnitSystem.METRIC,
       avoidHighways: false,
@@ -1170,6 +1172,7 @@ function continueProcessCompare (distanciaSave){
 
     for (var i = 0; i < ListaRanking.length; i++) {
         var ranking=algoritmRanking(ListaRanking[i].colegio,ListaRanking[i].distancia);
+        if  (ListaRanking[i].distancia==='55 km'){ListaRanking[i].distancia ='No se encontro direccion en google maps'};
         ListaRanking[i].puntaje=ranking;
         
      }
