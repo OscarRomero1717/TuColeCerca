@@ -12,7 +12,6 @@
 
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-
     <!-- Custom fonts for this template -->
     <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 
@@ -41,13 +40,14 @@
     <link rel="apple-touch-icon" href="img/appleicon.png" />
 </head>
 
+
+
 <body class="fixed-nav" id="page-top">
-    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
         <a class="navbar-brand" href="#">Colegios Bogotá</a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+                <span class="navbar-toggler-icon"></span>
+            </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav navbar-sidenav">
                 <li class="nav-item active" data-toggle="tooltip" data-placement="right" title="Filter" id="FilterMenu" onclick="showFilter()">
@@ -88,10 +88,10 @@
                         <div class="input-group">
                             <input type="text" id="nameSearch" class="form-control" placeholder="Buscar por nombre" />
                             <span class="input-group-btn">
-                  <button class="btn btn-primary" onclick="searchByNama()" type="button">
-                    <i class="fa fa-search"></i>
-                  </button>
-                </span>
+                                    <button class="btn btn-primary" onclick="searchByNama()" type="button">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
                         </div>
                     </form>
                 </li>
@@ -101,173 +101,126 @@
     <div id="loader" style="display: none"></div>
     <div class="content-wrapper py-3">
         <div class="container-fluid">
-            <!-- Breadcrumbs -->
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="#">Busqueda</a>
-                </li>
-                <li class="breadcrumb-item active">Resultados</li>
-            </ol>
-
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page"><a href="#">Busqueda</a></li>
+                </ol>
+            </nav>
             <div class="row" id="Filters">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <label>
-              <h6 class="card-title mb-1">
-                <a href="#">Discapacidades</a>
-              </h6>
-            </label>
+                    <label><h6 class="card-title mb-1"><a href="#">Discapacidades</a></h6></label>
                     <select class="form-control" id="discapacity">
-              <option value="false">Todos</option>
-              <option value="AUDITIVA">AUDITIVA</option>
-              <option value="COGNITIVA">COGNITIVA</option>
-              <option value="MOTORA">MOTORA</option>
-              <option value="MULTIPLE">MULTIPLE</option>
-              <option value="VISUAL">VISUAL</option>
-              <option value="OTRA">OTRA</option>
-            </select>
+                            <option value="false">Todos</option>
+                            <option value="AUDITIVA">AUDITIVA</option>
+                            <option value="COGNITIVA">COGNITIVA</option>
+                            <option value="MOTORA">MOTORA</option>
+                            <option value="MULTIPLE">MULTIPLE</option>
+                            <option value="VISUAL">VISUAL</option>
+                            <option value="OTRA">OTRA</option>
+                        </select>
                 </div>
-
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <label>
-              <h6 class="card-title mb-1">
-                <a href="#">Talentos Exepcionales</a>
-              </h6>
-            </label>
+                    <label><h6 class="card-title mb-1"><a href="#"><a href="#">Talentos Exepcionales</a></h6></label>
                     <select class="form-control" id="Talents">
-              <option value="false">Todos</option>
-              <option value="CAPACIDADES EXCEPCIONALES">
-                CAPACIDADES EXCEPCIONALES
-              </option>
-            </select>
+                            <option value="false">Todos</option>
+                            <option value="CAPACIDADES EXCEPCIONALES">Capacidades Ecepcionales</option>
+                        </select>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <label>
-              <h6 class="card-title mb-1">
-                <a href="#">Localidad</a>
-              </h6>
-            </label>
+                    <label><h6 class="card-title mb-1"><a href="#">Localidad</a></h6></label>
                     <select class="form-control" id="Zone">
-              <option value="false">Todos</option>
-              <option value="CHAPINERO">CHAPINERO</option>
-              <option value="SAN CRISTOBAL">SAN CRISTOBAL</option>
-              <option value="SANTAFE">SANTAFE</option>
-              <option value="TUNJUELITO">TUNJUELITO</option>
-              <option value="USAQUEN">USAQUÉN</option>
-              <option value="USME">USME</option>
-              <option value="RAFAEL URIBE">RAFAEL URIBE</option>
-              <option value="BOSA">BOSA</option>                         
-              <option value="FONTIBON">FONTIBON</option>             
-              <option value="KENNEDY">KENNEDY</option>
-             
-           
-
-            </select>
+                            <option value="false">Todos</option>
+                            <option value="CHAPINERO">CHAPINERO</option>
+                            <option value="SAN CRISTOBAL">SAN CRISTOBAL</option>
+                            <option value="SANTAFE">SANTAFE</option>
+                            <option value="TUNJUELITO">TUNJUELITO</option>
+                            <option value="USAQUEN">USAQUÉN</option>
+                            <option value="USME">USME</option>
+                            <option value="RAFAEL URIBE">RAFAEL URIBE</option>
+                            <option value="BOSA">BOSA</option>
+                            <option value="FONTIBON">FONTIBON</option>
+                            <option value="KENNEDY">KENNEDY</option>
+                        </select>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <label>
-              <h6 class="card-title mb-1">
-                <a href="#">Clase</a>
-              </h6>
-            </label>
+                    <label><h6 class="card-title mb-1"><a href="#">Clase</a></h6></label>
                     <select class="form-control" id="Class">
-              <option value="false">Todos</option>
-              <option value="DISTRITAL">DISTRITAL</option>
-              <option value="PRIVADO">PRIVADO</option>
-              <option value="MATRICULA CONTRATADA">MATRICULA CONTRATADA</option>
-            </select>
+                            <option value="false">Todos</option>
+                            <option value="DISTRITAL">DISTRITAL</option>
+                            <option value="PRIVADO">PRIVADO</option>
+                            <option value="MATRICULA CONTRATADA">MATRICULA CONTRATADA</option>
+                        </select>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <label>
-              <h6 class="card-title mb-1">
-                <a href="#">Énfasis</a>
-              </h6>
-            </label>
+                    <label><h6 class="card-title mb-1"><a href="#">Énfasis</a></h6></label>
                     <select class="form-control" id="EMPHASIS">
-              <option value="false">Todas</option>
-              <option value="ACADEMICO">ACADÉMICO</option>
-              <option value="TECNICO">TÉCNICO</option>
-            </select>
+                            <option value="false">Todas</option>
+                            <option value="ACADEMICO">ACADÉMICO</option>
+                            <option value="TECNICO">TÉCNICO</option>
+                        </select>
                 </div>
-
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <label>
-              <h6 class="card-title mb-1">
-                <a href="#">Especialidades</a>
-              </h6>
-            </label>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 mb-4">
+                    <label><h6 class="card-title mb-1"><a href="#">Especialidades</a> </h6></label>
                     <select class="form-control" id="Specialties">
-              
-              
-              <option value="false">Todas</option>
-              <option value="ARTICULACION">ARTICULACION</option>
-              <option value="ARTE O LENGUAS EXTRANJERAS">ARTE O LENGUAS EXTRANJERAS</option>
-              <option value="ELECTRONICA">AGROECOLOGICO</option>
-              <option value="ARTES">ARTES</option>
-              <option value="AMBIENTAL">AMBIENTAL</option>
-              <option value="ARTISTICA">ARTISTICA</option>
-              <option value="AGROPECUARIO">AGROPECUARIO</option>
-              <option value="APRENDIZAJE SIGNIFICATIVO Y PRODUCTIVO">APRENDIZAJE SIGNIFICATIVO Y PRODUCTIVO</option>
-              <option value="ARTES Y DEPORTES">ARTES Y DEPORTES</option>              
-              <option value="BACHILLERATO INTERNACIONAL">BACHILLERATO INTERNACIONAL</option>
-              <option value="CIENCIAS NATURALES">CIENCIAS NATURALES</option>
-              <option value="CIENCIAS SOCIALES">CIENCIAS SOCIALES</option>
-              <option value="CIENCIA">CIENCIA</option>
-              <option value="COMERCIAL">COMERCIAL</option>
-              <option value="CONTABILIDAD">CONTABILIDAD</option>
-              <option value="CONTABILIDAD Y FINANZAS">CONTABILIDAD Y FINANZAS</option>              
-              <option value="COMUNICACIÓN">COMUNICACIÓN</option>
-              <option value="CIENCIAS EXACTAS">CIENCIAS EXACTAS</option>
-              <option value="COMERCIO INTERNACIONA">COMERCIO INTERNACIONA</option>
-              <option value="COMPLEMENTACION EME">COMPLEMENTACION EME</option>
-              <option value="CIENCIAS MILITARES">CIENCIAS MILITARES</option>
-              <option value="DISEÑO GRAFICO">DISEÑO GRAFICO</option>
-              <option value="DISEÑO TECNOLOGICO">DISEÑO TECNOLOGICO</option>
-              <option value="DIVERSIFICADO">DIVERSIFICADO</option>
-              <option value="ELECTRONICA">ELECTRONICA</option>
-              <option value="FINANZAS Y ADMINSTRACION">FINANZAS Y ADMINSTRACION</option>
-              <option value="EMPRENDIMIENTO">EMPRENDIMIENTO</option>
-              <option value="ESPAÑOL">ESPAÑOL</option>
-              <option value="FRANCES">FRANCES</option>
-              <option value="FISICA">FISICA</option>
-              <option value="GESTION EMPRESARIAL">GESTION EMPRESARIAL</option>
-              <option value="GESTION AMBIENTAL">GESTION AMBIENTAL</option>
-              <option value="GERONTOLOGIA">GERONTOLOGIA</option>
-              <option value="HUMANIDADES">HUMANIDADES</option>
-              <option value="HUMANINADES">HUMANINADES</option>
-              <option value="HUMANISMO Y CONSTRUCTIVISMO">HUMANISMO Y CONSTRUCTIVISMO</option>
-              <option value="INGLES">INGLES</option>
-              <option value="INVESTIGACION EN CIENCIA">INVESTIGACION EN CIENCIA</option>
-              <option value="INFORMATICA">INFORMATICA</option>
-              <option value="INGENIERIA">INGENIERIA</option>
-              <option value="MATEMATICAS">MATEMATICAS</option>
-              <option value="MEDIOS AUDIVISUALES">MEDIOS AUDIVISUALES</option>
-              <option value="NORMAL SUPERIOR">NORMAL SUPERIOR</option>
-              <option value="ORIENTACION MILITAR">ORIENTACION MILITAR</option>              
-              <option value="ORIENTACION MUSICAL">ORIENTACION MUSICAL</option>
-              <option value="PRODUCTIVIDAD">PRODUCTIVIDAD</option>              
-              <option value="QUIMICA">QUIMICA</option>
-              <option value="REPRESENTACION GRAFICA ELECTRONICA">REPRESENTACION GRAFICA ELECTRONICA</option>
-              <option value="SISTEMAS Y COMPUTACION">SISTEMAS Y COMPUTACION</option>
-              <option value="TECNOLOGIA">TECNOLOGIA</option>
-              <option value="VENTAS Y SERVICIOS">VENTAS Y SERVICIOS</option>
-              
-              
-              
-              <option value="OTRO">OTRO</option>
-            </select>
+                            <option value="false">Todas</option>
+                            <option value="ARTICULACION">ARTICULACION</option>
+                            <option value="ARTE O LENGUAS EXTRANJERAS">ARTE O LENGUAS EXTRANJERAS</option>
+                            <option value="ELECTRONICA">AGROECOLOGICO</option>
+                            <option value="ARTES">ARTES</option>
+                            <option value="AMBIENTAL">AMBIENTAL</option>
+                            <option value="ARTISTICA">ARTISTICA</option>
+                            <option value="AGROPECUARIO">AGROPECUARIO</option>
+                            <option value="APRENDIZAJE SIGNIFICATIVO Y PRODUCTIVO">APRENDIZAJE SIGNIFICATIVO Y PRODUCTIVO</option>
+                            <option value="ARTES Y DEPORTES">ARTES Y DEPORTES</option>              
+                            <option value="BACHILLERATO INTERNACIONAL">BACHILLERATO INTERNACIONAL</option>
+                            <option value="CIENCIAS NATURALES">CIENCIAS NATURALES</option>
+                            <option value="CIENCIAS SOCIALES">CIENCIAS SOCIALES</option>
+                            <option value="CIENCIA">CIENCIA</option>
+                            <option value="COMERCIAL">COMERCIAL</option>
+                            <option value="CONTABILIDAD">CONTABILIDAD</option>
+                            <option value="CONTABILIDAD Y FINANZAS">CONTABILIDAD Y FINANZAS</option>              
+                            <option value="COMUNICACIÓN">COMUNICACIÓN</option>
+                            <option value="CIENCIAS EXACTAS">CIENCIAS EXACTAS</option>
+                            <option value="COMERCIO INTERNACIONA">COMERCIO INTERNACIONA</option>
+                            <option value="COMPLEMENTACION EME">COMPLEMENTACION EME</option>
+                            <option value="CIENCIAS MILITARES">CIENCIAS MILITARES</option>
+                            <option value="DISEÑO GRAFICO">DISEÑO GRAFICO</option>
+                            <option value="DISEÑO TECNOLOGICO">DISEÑO TECNOLOGICO</option>
+                            <option value="DIVERSIFICADO">DIVERSIFICADO</option>
+                            <option value="ELECTRONICA">ELECTRONICA</option>
+                            <option value="FINANZAS Y ADMINSTRACION">FINANZAS Y ADMINSTRACION</option>
+                            <option value="EMPRENDIMIENTO">EMPRENDIMIENTO</option>
+                            <option value="ESPAÑOL">ESPAÑOL</option>
+                            <option value="FRANCES">FRANCES</option>
+                            <option value="FISICA">FISICA</option>
+                            <option value="GESTION EMPRESARIAL">GESTION EMPRESARIAL</option>
+                            <option value="GESTION AMBIENTAL">GESTION AMBIENTAL</option>
+                            <option value="GERONTOLOGIA">GERONTOLOGIA</option>
+                            <option value="HUMANIDADES">HUMANIDADES</option>
+                            <option value="HUMANINADES">HUMANINADES</option>
+                            <option value="HUMANISMO Y CONSTRUCTIVISMO">HUMANISMO Y CONSTRUCTIVISMO</option>
+                            <option value="INGLES">INGLES</option>
+                            <option value="INVESTIGACION EN CIENCIA">INVESTIGACION EN CIENCIA</option>
+                            <option value="INFORMATICA">INFORMATICA</option>
+                            <option value="INGENIERIA">INGENIERIA</option>
+                            <option value="MATEMATICAS">MATEMATICAS</option>
+                            <option value="MEDIOS AUDIVISUALES">MEDIOS AUDIVISUALES</option>
+                            <option value="NORMAL SUPERIOR">NORMAL SUPERIOR</option>
+                            <option value="ORIENTACION MILITAR">ORIENTACION MILITAR</option>              
+                            <option value="ORIENTACION MUSICAL">ORIENTACION MUSICAL</option>
+                            <option value="PRODUCTIVIDAD">PRODUCTIVIDAD</option>              
+                            <option value="QUIMICA">QUIMICA</option>
+                            <option value="REPRESENTACION GRAFICA ELECTRONICA">REPRESENTACION GRAFICA ELECTRONICA</option>
+                            <option value="SISTEMAS Y COMPUTACION">SISTEMAS Y COMPUTACION</option>
+                            <option value="TECNOLOGIA">TECNOLOGIA</option>
+                            <option value="VENTAS Y SERVICIOS">VENTAS Y SERVICIOS</option>
+                            <option value="OTRO">OTRO</option>
+                        </select>
                 </div>
-
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="padding: 1em">
-                    <button onclick="Search();" type="button" class="btn btn-lg btn-block btn-defualt">
-              <span
-                class="glyphicon glyphicon-search"
-                aria-hidden="true"
-              ></span>
-              Buscar
-            </button>
+                <div class="m-auto">
+                    <button type="button" class="btn btn-primary" onclick="Search()">Buscar</button>
                 </div>
             </div>
-
             <div class="row" id="Results" style="display: none">
                 <div class="col-lg-12">
                     <hr class="mt-2" />
@@ -279,75 +232,47 @@
                     </div>
                 </div>
             </div>
-
             <div class="row" id="MapContent" style="display: none">
                 <div id="map" style="width: 100%; height: 30em"></div>
             </div>
-
-            <div class="row" style="display: none" id="RootComparerDiv">
-                <div class="col-12">
-                    <div id="">
-                        Por favor ingrese su dirección para realizar un algoritmo basado en distancia, énfasis, idiomas y capacidades especiales que se enviara a su correo.
-                        <div class="form-group">
-                            <input type="text" name="username" id="addressUser" tabindex="1" class="form-control" placeholder="Dirección" value="" />
+            <div class="row p-3" style="display: none" id="RootComparerDiv">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="col-12">
+                            <p class="text-justify">Por favor ingrese su dirección para realizar un algoritmo basado en distancia, énfasis, idiomas y capacidades especiales que se enviara a su correo.</p>
+                            <div class="form-group">
+                                <input type="email" name="username" id="addressUser" tabindex="1" class="form-control" placeholder="Ingrese dirección" value="" />
+                            </div>
+                            <div class="m-auto">
+                                <button type="button" class="btn btn-info" onclick="compare()">Realizar comparación</button>
+                            </div>
                         </div>
-
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="padding: 1em">
-                            <button onclick="compare();" type="button" class="btn btn-lg btn-block btn-defualt">
-                            <span
-                                class="glyphicon glyphicon-search"
-                                aria-hidden="true"
-                            ></span>
-                            Realizar comparación.
-                            </button>
-                        </div>
-
                     </div>
                 </div>
             </div>
             <div class="row" id="ComparerDiv"></div>
-
             <div id="sendMailmodal" style="display: none">
-                <div class="modal-body">
-
-
-                    <div id="SenMailDiv">
-
-
-                        Por favor ingrese un correo electrónico para enviar el resultado:
-                        <div class="form-group">
-                            <input type="text" name="username" id="oscar" tabindex="1" class="form-control" placeholder="Correo" value="" />
+                <div class="card">
+                    <div class="card-body">
+                        <div id="SenMailDiv">Por favor ingrese un correo electrónico para enviar el resultado:
+                            <div class="form-group">
+                                <input type="text" name="username" id="oscar" tabindex="1" class="form-control" placeholder="Correo" value="" />
+                            </div>
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-success" onclick="validarPDF()">Enviar</button>
+                            </div>
                         </div>
-
-
-
-
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="padding: 1em">
-                            <button onclick="validarPDF();" type="button" class="btn btn-lg btn-block btn-defualt">
-                        <span
-                            class="glyphicon glyphicon-search"
-                            aria-hidden="true"
-                        ></span>
-                        enviar
-                        </button>
-                        </div>
-
                         <input id="inputFile" type="file" onchange="convertToBase64()" />Seleccion el PDF a enviar<br />
                     </div>
-
                 </div>
-                <br />
             </div>
+            <br />
         </div>
-        <!-- /.container-fluid -->
     </div>
-    <!-- /.content-wrappe r -->
-
-    <!-- Scroll to Top Button -->
+    </div>
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fa fa-angle-up"></i>
     </a>
-
     <!-- Logout Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -355,16 +280,16 @@
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+                <span aria-hidden="true">&times;</span>
+                </button>
                 </div>
                 <div class="modal-body">
                     Select "Logout" below if you are ready to end your current session.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
-              Cancel
-            </button>
+                Cancel
+                </button>
                     <a class="btn btn-primary" href="login.html">Logout</a>
                 </div>
             </div>
@@ -402,11 +327,6 @@
         <br />
         <div id="elementH"></div>
     </div>
-
-
-
-
-
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/popper/popper.min.js"></script>
@@ -434,14 +354,11 @@
                 });
         }
     </script>
-
     <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
     <script src="https://smtpjs.com/v3/smtp.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
-
-
-
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXRjjPf0aiY2ilp-mM2sy4fKHsdke38FE&libraries=visualization,places&callback=initMap"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 </body>
 
 </html>
