@@ -303,6 +303,9 @@ function showComparations() {
     $("#Results").hide();
     $("#Filters").hide();
     $("#MapContent").hide();
+    $("#variable").show();
+
+    
 
     $("#CompareMenu").addClass("active");
     $("#ResultMenu").removeClass("active");
@@ -862,9 +865,45 @@ function algoritmRanking(colegio,distancia)
   var arrayEpecialidad =  numeroEpecialidades != undefined && numeroEpecialidades != 'No aplica'? numeroEpecialidades.split('-'): 0;
   otros=arrayEpecialidad.length >0?calculteEpecilatys(arrayEpecialidad.length,otrosvarible):0;
   
-  var total  = parseInt(otros)+parseInt(idiomas)+parseInt(discapacidades)+parseInt(distnacia)+parseInt(capacidadExcepcionales);
+
+  var dis= parseInt(distnacia);
+  var total  = parseFloat(otros)+parseFloat(idiomas)+parseFloat(discapacidades)+parseFloat(distnacia)+parseFloat(capacidadExcepcionales);
 
   return  total;
+
+}
+
+
+$("#especialesvarible").click(function(event) { 
+    validacion();
+}); 
+
+$("#otrosvarible").click(function(event) { 
+    validacion();
+}); 
+$("#discapacidades").click(function(event) { 
+    validacion();
+}); 
+$("#cercania").click(function(event) { 
+    validacion();
+}); 
+$("#idiomasvariable").click(function(event) { 
+    validacion();
+}); 
+function validacion(){
+
+    var otros= parseFloat( $("#otrosvarible").val());
+    var discapacidad= parseFloat( $("#discapacidades").val());
+    var distancia= parseFloat( $("#cercania").val());
+    var enfasis=  parseFloat($("#especialesvarible").val());
+    var idiomas=  parseFloat($("#idiomasvariable").val());
+
+
+    var total  = otros+discapacidad+distancia+enfasis+idiomas;
+    if(total> 5)
+    {
+        alert("La suma de las variable no debe superar 5 para el calulo del algortimo ");
+    }
 
 }
 
@@ -909,6 +948,7 @@ function compare(){
     if( validarDireccion()){
         document.getElementById("loader").style.display = "block";
         $("#ComparerDiv").hide();
+        $("#variable").hide();
         var index = 0; ListaRanking=[];
         
         $("#elementH").html("");
