@@ -59,7 +59,7 @@
                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Results" id="ResultMenu" onclick="showResults()">
                     <a class="nav-link" href="javascript:void(0)">
                         <i class="fa fa-fw fa-address-card-o"></i>
-                        <span class="nav-link-text"> Resultadoss </span>
+                        <span class="nav-link-text"> Resultados </span>
                     </a>
                 </li>
                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Map" id="MapMenu" onclick="showMap()">
@@ -235,6 +235,7 @@
             <div class="row" id="MapContent" style="display: none">
                 <div id="map" style="width: 100%; height: 30em"></div>
             </div>
+            <div></div>
             <div class="row p-3" style="display: none" id="RootComparerDiv">
                 <div class="card">
                     <div class="card-body">
@@ -246,6 +247,48 @@
                             <div class="m-auto">
                                 <button type="button" class="btn btn-info" onclick="compare()">Realizar comparación</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row p-3" id="variable">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="col-12">
+                            <p class="text-justify">Por favor ingrese de 1 a 5 (Donde 0 nada importante, 5 muy impotante) ,los siguientes parametros según considere la relevancia en la escogencia del colegio para realizar algortimo(Nota:la suma de todas las varible sno debe superar 5)</p>
+                            <div class="form-group">
+                                <label for="cercania">Cercania del colegio a la direccion ingresada:</label>
+                                <input type="number" min="0" max="5" id="cercania" step="0.1"  tabindex="1" value ="2"  />
+                                
+                            </div>
+
+                            <div class="form-group">
+                                <label for="discapacidades">¿colegio tiene especialidad en discpacidades?:</label>
+                                <input type="number" min="0" max="5" id="discapacidades"   step="0.1" tabindex="1" value=1.25 />
+                                
+                            </div>
+
+                            <div class="form-group">
+                                <label for="idiomasvariable">¿Colegio tiene idiomas adicionales al español?:</label>
+                                <input type="number" min="0" max="5" id="idiomasvariable"  step="0.1"tabindex="1"  value="0.75"/>
+                                
+                            </div>
+
+                            <div class="form-group">
+                                <label for="otrosvarible">¿Colegio tiene esepcialidad y énfasis adicionales?:</label>
+                                <input type="number" min="0" max="5" id="otrosvarible"  step="0.1" tabindex="1"  value="0.75"/>
+                                
+                            </div>
+
+                            <div class="form-group">
+                                <label for="especialesvarible">¿Colegio tiene énfasis en capacidades especiales?:</label>
+                                <input type="number" min="0" max="5" id="especialesvarible"  step="0.1" tabindex="1"  value="0.25"/>
+                                
+                            </div>
+
+
+                           
+                            
                         </div>
                     </div>
                 </div>

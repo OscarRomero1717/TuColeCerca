@@ -842,52 +842,67 @@ function algoritmRanking(colegio,distancia)
   ditanciaCireccion =arraydistanbica[0];
   ditanciaCireccion=ditanciaCireccion.trim();
   ditanciaCireccion=parseInt(ditanciaCireccion);
+
+
+  var distanciavariable =$("#cercania").val();
+  var discapacidadvariable =$("#discapacidades").val();
+  
+  var idiomasvariable =$("#idiomasvariable").val();
+  var otrosvarible =$("#otrosvarible").val();
+  var especialesvarible =$("#especialesvarible").val();
   
   
-  distnacia=ditanciaCireccion != undefined? distanceChangeRanking(ditanciaCireccion):0;
-  capacidadExcepcionales = capacidades != undefined && numeroDiscapacidades != 'No aplica' ? 0.25:0;
+  distnacia=ditanciaCireccion != undefined? distanceChangeRanking(ditanciaCireccion,distanciavariable):0;
+  capacidadExcepcionales = capacidades != undefined && numeroDiscapacidades != 'No aplica' ? especialesvarible:0;
   var arrayDiscapacidades = numeroDiscapacidades != undefined && numeroDiscapacidades != 'No aplica' ? numeroDiscapacidades.split('-'): 0;
-  discapacidades= arrayDiscapacidades.length >0?calculteDiscapacity(arrayDiscapacidades.length):0;
+  discapacidades= arrayDiscapacidades.length >0?calculteDiscapacity(arrayDiscapacidades.length,discapacidadvariable):0;
   var arrayIdiomas =  numeroIdiomas != undefined && numeroIdiomas != 'No aplica' ? numeroIdiomas.split('-'): 0;
-  idiomas=arrayIdiomas.length >0?calculteIdioms(arrayIdiomas.length):0;
+  idiomas=arrayIdiomas.length >0?calculteIdioms(arrayIdiomas.length,idiomasvariable):0;
 
   var arrayEpecialidad =  numeroEpecialidades != undefined && numeroEpecialidades != 'No aplica'? numeroEpecialidades.split('-'): 0;
-  otros=arrayEpecialidad.length >0?calculteEpecilatys(arrayEpecialidad.length):0;
+  otros=arrayEpecialidad.length >0?calculteEpecilatys(arrayEpecialidad.length,otrosvarible):0;
+  
+  var total  = parseInt(otros)+parseInt(idiomas)+parseInt(discapacidades)+parseInt(distnacia)+parseInt(capacidadExcepcionales);
 
-  return  otros+idiomas+discapacidades+distnacia+capacidadExcepcionales;
+  return  total;
 
 }
 
 
-function distanceChangeRanking(distance){
-    if(distance >=0 && distance <2){return 2.5;}
-    if(distance >=2 && distance <4){return 2.25;}
-    if(distance >=4 && distance <6){return 2;}
-    if(distance >=6 && distance <12){return 1.75;}
-    if(distance >=12 && distance <20){return 1.5;}
-    if(distance >=20 && distance <25){return 1.25;}
-    if(distance >=25 && distance <35){return 1;}
-    if(distance >=35 && distance <50){return 0.5;}
+function distanceChangeRanking(distance,max){
+
+    var  dif= max/9;
+    if(distance >=0 && distance <2){return max;}
+    if(distance >=2 && distance <4){return max-dif;}
+    if(distance >=4 && distance <6){return max-(dif*2);}
+    if(distance >=6 && distance <12){return max-(dif*3);}
+    if(distance >=12 && distance <20){return max-(dif*4);}
+    if(distance >=20 && distance <25){return max-(dif*5);}
+    if(distance >=25 && distance <35){return max-(dif*6);}
+    if(distance >=35 && distance <50){return max-(dif*7);}
     if(distance >=50 ){return 0.25;}
 }
-function calculteDiscapacity(numeroDiscapcidades)
+function calculteDiscapacity(numeroDiscapcidades,max)
 {
-  if(numeroDiscapcidades ===1){return 0.3125}
-  if(numeroDiscapcidades ===2){return 0.625}
-  if(numeroDiscapcidades ===3){return 0.9375}
-  if(numeroDiscapcidades >= 4){return 1.25}
+
+    var dif= max/4
+  if(numeroDiscapcidades ===1){return max-(dif*3)}
+  if(numeroDiscapcidades ===2){return max-(dif*2)}
+  if(numeroDiscapcidades ===3){return max -dif}
+  if(numeroDiscapcidades >= 4){return max}
 }
 
-function calculteIdioms(numeroidiomas)
+function calculteIdioms(numeroidiomas,max)
 {
-  if(numeroidiomas ===1){return 0.25}
-  if(numeroidiomas ===2){return 0.5}
-  if(numeroidiomas >=3){return 0.75}  
+    var dif= max/3
+  if(numeroidiomas ===1){return max-(dif*2)}
+  if(numeroidiomas ===2){return max-dif}
+  if(numeroidiomas >=3){return max}  
 }
 
-function calculteEpecilatys(numeroEspecialidades)
+function calculteEpecilatys(numeroEspecialidades,max)
 {
-  return   numeroEspecialidades*0.75/8;
+  return   numeroEspecialidades*max/8;
 }
 
 function compare(){
